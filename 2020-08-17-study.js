@@ -70,9 +70,9 @@ async function sumLevel3(...rest) {
   return res;
 }
 
-main("青铜", sum);
-main("白银", sumLevel2);
-main("王者", sumLevel3);
+main("青铜", sum); // 青铜: 6031.170ms
+main("白银", sumLevel2); // 白银: 1024.725ms
+main("王者", sumLevel3); // 王者: 1027.094ms
 
 // 作者： 前端进击者
 // 链接： https: //juejin.im/post/6859121743869509646
