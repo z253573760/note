@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntersectionObserver</title>
+  <style>
+    #root {
+      background: pink;
+      height: 300px;
+      overflow-y: scroll;
+    }
+
+    .lazy-loaded {
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
+<script>
+  function init() {
+    const root = document.querySelector("#root")
+    console.log(root.content)
+    var content = root.querySelector('template');
+    console.log(content)
+    for (let i = 0; i < 100; i++) {
+      const lazyLoaed = document.createElement("div")
+      lazyLoaed.className = "lazy-loaded"
+      lazyLoaed.innerHTML = 'lazy-loaded' + i
+      root.appendChild(lazyLoaed)
+    }
+  }
+
+  function query(selector) {
+    return Array.from(document.querySelectorAll(selector));
+  }
+
+  init()
+  // const io = new IntersectionObserver((changes) => {
+  //   changes.forEach(item => {
+  //     console.log(item.target)
+  //   })
+  // })
+
+  // query(".lazy-loaded").forEach(item => {
+  //   io.observe(item)
+  // })
+</script>
