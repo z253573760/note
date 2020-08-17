@@ -110,12 +110,12 @@ export default async function handler({
     refreshTokenPromise = refreshTokenPromise.then(() => request(opts)) //利用 promise 的队列机制 把请求添加的 全局对象的promise队列中
     return refreshTokenPromise
   }
-  // token 没过期  正常请求
+  // token没过期啥也不管=>正常请求
   return request(opts)
 }
-// 场景模拟
-// A, B, C 三个异步请求 都需要刷新token 现在同时请求 
-// 1. A进入handler函数 先上锁 并且把刷新token的promise存到全局
-// 2. 与此同时B,C也跟着进来了发现 现在被锁住了 只能排在全局promise的队列后面,等待刷新token的promise结束
-// 3. A由于在判断中 发现需要刷新token然后,一直在在等待刷新token的promise结束,等拿到最新的token后才继续执行
+// 场景解析
+// A, B, C 三个异步请求 都需要刷新token现在同时请求 
+// 1. A进入handler函数发现需要刷新token走 if (now > lastTime && lock === false)的支线 ,先上锁,并且把刷新token的promise存到全局
+// 2. 与此同时B,C也跟着进来了,发现现在被锁住了, 走if（lock === true）的支线,只能排在全局promise的队列后面,等待刷新token的promise结束 
+// 3. A由于在判断中,发现需要刷新token然后一直在在等待刷新token的promise结束(此时锁已经解开),直接走 return request(otps)的支线 
 // 4. 刷新token的promise结束了,promise 队列中的B,C也跟着执行了
