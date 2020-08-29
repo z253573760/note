@@ -11,7 +11,7 @@ const eventBus = () => ({
     const list = [...this[event]]
     list.forEach(cb => cb(...args));
   },
-  // vm.$off( [event, callback] )
+  // vm.$off( [event, callback] ) // 抄vue官网的解释
   // 用法：
   // 移除自定义事件监听器。
   // 如果没有提供参数，则移除所有的事件监听器；
