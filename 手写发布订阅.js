@@ -9,10 +9,7 @@ const eventBus = () => ({
   $emit(event, ...args) {
     if (!this[event]) return
     const list = [...this[event]]
-    list.forEach(cb => {
-      // console.log("cb", cb)
-      cb(...args)
-    });
+    list.forEach(cb => cb(...args));
   },
   // vm.$off( [event, callback] )
   // 用法：
@@ -22,11 +19,13 @@ const eventBus = () => ({
   // 如果同时提供了事件与回调，则只移除这个回调的监听器。
   $off(event, fn) {
     if (!arguments.length) {
-      //其实就是初始化 或者循环清除掉当前的 event 的 key 
+      //其实就是初始化 或者 循环清除掉当前的 event 的 key 
+      //这边方便理解 懒得秀 就有lowB方式写
       Object.keys(this).forEach(item => {
-        if (item !== '$on' || item !== '$off' || item !== '$emit') {
-          this[item] = []
-        }
+        if (item === "$on") return
+        if (item === "$off") return
+        if (item === "$emit") return
+        this[item] = []
       })
       return
     }
