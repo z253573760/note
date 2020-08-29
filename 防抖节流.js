@@ -39,7 +39,7 @@ function debounceAndThrottle(fn, delay = 60) {
     }
     timer = setTimeout(() => {
       prev = cur
-      return fn(...args)
+      fn(...args)
     }, delay);
   }
 }
