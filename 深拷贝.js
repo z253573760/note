@@ -48,7 +48,6 @@ function cloneArray(target, map) {
 function cloneObject(target, map) {
   // 处理循环引用
   const isCopy = map.get(target);
-  console.log("isCopy", isCopy);
   if (isCopy) {
     return isCopy;
   }
