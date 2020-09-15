@@ -18,7 +18,7 @@ class AjPromise {
           this.state = FULFILLED;
           this.value = value;
           this.onFulfilledCallbacks.map(cb => {
-            cb = cb(this.value);
+            cb(this.value);
           });
         }
       });
@@ -29,7 +29,7 @@ class AjPromise {
           this.state = REJECTED;
           this.reason = reason;
           this.onRejectedCallbacks.map(cb => {
-            cb = cb(this.reason);
+            cb(this.reason);
           });
         }
       });

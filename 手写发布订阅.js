@@ -60,15 +60,15 @@ vm.$emit("move", "小明");
 vm.$emit("move", "小红");
 vm.$emit("move", "小明");
 vm.$emit("move", "小红");
-
-// const 高阶函数 = (cb) => {
-//   return (...args) => {
-//     try {
-//       const res = cb(...args);
-//       return [res, null];
-//     } catch (err) {
-//       new Aha().fix(err).log(err);
-//       reutrn[(null, err)];
-//     }
-//   };
-// };
+//面试官:怎么监控线上代码的异常并且定位和快速修复?
+const p10核心 = (cb) => {
+  return (...args) => {
+    try {
+      const res = cb(...args);
+      return [res, null];
+    } catch (err) {
+      new Aha().fix(err).log(err);
+      reutrn[null, err];
+    }
+  };
+};
