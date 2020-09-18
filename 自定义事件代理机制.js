@@ -31,7 +31,7 @@ class HandlerEventQueue {
   suspend() {
     this.isGoing = false;
   }
-  async continue() {
+  async continue () {
     this.isGoing = true;
     while (this.isGoing && this.cache.length) {
       await new Promise((r) => setTimeout(r, this.time));
@@ -62,8 +62,7 @@ class HandlerEventQueue {
   }
 }
 
-const steps = Array.from(
-  {
+const steps = Array.from({
     length: 20,
   },
   (v, k) => (a = "xxx") => console.log(this, k, a)
@@ -72,6 +71,7 @@ const steps = Array.from(
 function isObject(target) {
   return typeof target === "object" && target !== null;
 }
+
 function reactive(target, track) {
   if (!isObject(target)) {
     return target;
@@ -91,6 +91,7 @@ function reactive(target, track) {
 // 报数 打印1-20
 
 const watchWeakMap = new WeakMap();
+
 function watch1(target, key, cb) {
   const list = key.split(".");
   while (list.length > 1) {
@@ -111,7 +112,6 @@ function watch1(target, key, cb) {
 }
 
 function watch(key, cb, target = eventQueue) {
-  console.log("key", key);
   const list = key.split(".");
   if (list.length > 1) {
     const _key = list.shift();
@@ -131,28 +131,6 @@ function watch(key, cb, target = eventQueue) {
     });
   }
 }
-// class Watcher {
-//   watch(target, key, cb) {
-//     const res = watchWeakMap.get(target);
-//     if (!res) {
-//       watchWeakMap.set(target, {
-//         [key]: cb,
-//       });
-//     } else {
-//       watchWeakMap.set(target, {
-//         ...res,
-//         [key]: cb,
-//       });
-//     }
-//   }
-// }
-
-// const watchMap = new Map();
-// const countOff = reactive(_countOff, (target, propKey, value) => {
-//   const res = watchWeakMap.get(target);
-//   res && res[propKey] && res[propKey](value);
-// });
-
 const ref = (obj) =>
   reactive(obj, (target, propKey, value) => {
     const res = watchWeakMap.get(target);
