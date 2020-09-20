@@ -31,7 +31,7 @@ class HandlerEventQueue {
   suspend() {
     this.isGoing = false;
   }
-  async continue () {
+  async continue() {
     this.isGoing = true;
     while (this.isGoing && this.cache.length) {
       await new Promise((r) => setTimeout(r, this.time));
@@ -62,7 +62,8 @@ class HandlerEventQueue {
   }
 }
 
-const steps = Array.from({
+const steps = Array.from(
+  {
     length: 20,
   },
   (v, k) => (a = "xxx") => console.log(this, k, a)
@@ -91,25 +92,6 @@ function reactive(target, track) {
 // 报数 打印1-20
 
 const watchWeakMap = new WeakMap();
-
-function watch1(target, key, cb) {
-  const list = key.split(".");
-  while (list.length > 1) {
-    //
-    console.log("不应该触发");
-  }
-  const res = watchWeakMap.get(target);
-  if (!res) {
-    watchWeakMap.set(target, {
-      [key]: cb,
-    });
-  } else {
-    watchWeakMap.set(target, {
-      ...res,
-      [key]: cb,
-    });
-  }
-}
 
 function watch(key, cb, target = eventQueue) {
   const list = key.split(".");
