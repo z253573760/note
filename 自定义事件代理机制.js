@@ -92,6 +92,9 @@ function reactive(target, track) {
       return reactive(res, track);
     },
     set(target, propKey, value, receiver) {
+      let oldValue = target[propKey];
+      if (value === oldValue)
+        return Reflect.set(target, propKey, value, receiver);
       track(target, propKey, value, receiver); // 当数据被更改 触发钩子
       return Reflect.set(target, propKey, value, receiver);
     },
@@ -150,6 +153,10 @@ watch("cache.length", (value) => {
 
 async function main() {
   countOff.start();
+  countOff.isGoing = true;
+  countOff.isGoing = true;
+  countOff.isGoing = true;
+  countOff.isGoing = true;
   await new Promise((r) => setTimeout(r, 2000));
   countOff.suspend();
   await new Promise((r) => setTimeout(r, 2000));
