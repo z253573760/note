@@ -2,12 +2,12 @@
 // 在谷歌插件中利用BG主线程与服务端建立socket链接进行通信
 // 对指定的标签页进行一系列的业务操作
 // 并且监测业务操作的执行情况通信给服务端
-//
-// 方案:实现了一个任务队列 并且再实现了一个观察者去观察这个任务队列的各种属性的变化
+// 方案:实现了一个任务队列 HandlerEventQueue
+// 创建一个 warcher 作为观察者去 观察这个任务队列的各种属性的变化
 
 /**
  * 事件处理  接受一个队列 按顺序执行队列中的事件
- *
+ * @param {Array [Function]} steps
  */
 class HandlerEventQueue {
   constructor(queue = [], time = 500) {
