@@ -1,15 +1,25 @@
+// 需求描述：
+// 在谷歌插件中利用BG主线程与服务端建立socket链接进行通信
+// 对指定的标签页进行一系列的业务操作
+// 并且监测业务操作的执行情况通信给服务端
+//
+// 方案:实现了一个任务队列 并且再实现了一个观察者去观察这个任务队列的各种属性的变化
+
 /**
  * 事件处理  接受一个队列 按顺序执行队列中的事件
  *
  */
 class HandlerEventQueue {
-  constructor(queue = [], name = "未命名事件", time = 500) {
-    this.time = time;
-    this.name = name;
-    this.queue = [...queue];
-    this.isGoing = false;
-    this.cache = [...this.queue];
+  constructor(queue = [], time = 500) {
+    this.time = time; // 时间间隔
+    this.queue = [...queue]; // 完整的任务队列
+    this.isGoing = false; // 当前任务的执行状态  空闲 忙碌
+    this.cache = [...this.queue]; // 剩余任务队列
   }
+  /**
+   * 在原来的任务队列中添加新的任务队列 并且执行
+   * @param {Array Function} queue
+   */
   add(queue) {
     this.queue.push(...queue);
     this.cache.push(...queue);
@@ -42,6 +52,7 @@ class HandlerEventQueue {
   }
   stop() {
     this.isGoing = false;
+    this.queue = [];
     this.cache = [];
   }
   /**
@@ -66,6 +77,11 @@ function isObject(target) {
   return typeof target === "object" && target !== null;
 }
 
+/**
+ * 响应式
+ * @param {Object} target 被代理的对象
+ * @param {Function} track 触发更新的钩子
+ */
 function reactive(target, track) {
   if (!isObject(target)) {
     return target;
@@ -76,7 +92,7 @@ function reactive(target, track) {
       return reactive(res, track);
     },
     set(target, propKey, value, receiver) {
-      track(target, propKey, value, receiver);
+      track(target, propKey, value, receiver); // 当数据被更改 触发钩子
       return Reflect.set(target, propKey, value, receiver);
     },
   });
@@ -106,23 +122,28 @@ function watch(key, cb, target = eventQueue) {
 const ref = (obj) =>
   reactive(obj, (target, propKey, value) => {
     const res = watchWeakMap.get(target);
-    res && res[propKey] && res[propKey](value);
+    res && res[propKey] && res[propKey](value, target, propKey);
   });
 
 // demo
+// 打印1-20
 const steps = Array.from(
   {
     length: 20,
   },
-  (v, k) => (a = "xxx") => console.log(this, k, a)
+  (_, k) => (a = "xxx") => console.log(this, k, a)
 );
 
+//创建一个任务队列
 const eventQueue = new HandlerEventQueue(steps);
+//给这个任务队列添加观察者
 const countOff = ref(eventQueue);
 
+//观察任务队列的执行状态
 watch("isGoing", (value) => {
   console.log("isGoing=>执行改变", value, value ? "忙碌" : "空闲");
 });
+//观察任务队列的任务长度
 watch("cache.length", (value) => {
   console.log("cache.length  => 剩余任务数量", value);
 });
