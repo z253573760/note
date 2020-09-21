@@ -62,13 +62,6 @@ class HandlerEventQueue {
   }
 }
 
-const steps = Array.from(
-  {
-    length: 20,
-  },
-  (v, k) => (a = "xxx") => console.log(this, k, a)
-);
-
 function isObject(target) {
   return typeof target === "object" && target !== null;
 }
@@ -89,10 +82,7 @@ function reactive(target, track) {
   });
 }
 
-// 报数 打印1-20
-
 const watchWeakMap = new WeakMap();
-
 function watch(key, cb, target = eventQueue) {
   const list = key.split(".");
   if (list.length > 1) {
@@ -118,6 +108,14 @@ const ref = (obj) =>
     const res = watchWeakMap.get(target);
     res && res[propKey] && res[propKey](value);
   });
+
+// demo
+const steps = Array.from(
+  {
+    length: 20,
+  },
+  (v, k) => (a = "xxx") => console.log(this, k, a)
+);
 
 const eventQueue = new HandlerEventQueue(steps);
 const countOff = ref(eventQueue);
