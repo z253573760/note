@@ -23,17 +23,19 @@ function reactive(target) {
     },
   })
 }
-
 const effectStack = []
 /* 声明响应函数cb(依赖响应式数据) */
 function effect(cb) {
-  const rxEffect = function () {
-    effectStack.push(rxEffect)
-    return cb()
+  const effect = function () {
+    effectStack.push(effect)
+    cb()
+    effectStack.pop()
+    return cb
   }
-  rxEffect()
-  return rxEffect
+  effect()
 }
+
+
 const targetMap = new WeakMap()
 /* 依赖收集：建立 数据&cb 映射关系 */
 function track(target, key) {
@@ -52,7 +54,6 @@ function track(target, key) {
   }
   deps.add(effectFn)
 }
-
 /* 触发更新：根据映射关系，执行cb */
 function trigger(target, key) {
   //console.log('触发更新：根据映射关系，执行cb ')
@@ -75,8 +76,12 @@ const vm = reactive(obj)
 effect(() => {
   vm.a
   vm.B
-  console.log("我是副作用")
+  console.log("我是副作用", effectStack)
 })
-// React.effect(() => {
-//   console.log("我是副作用")
-// }, [vm.a, vm.B])
+effect(() => {
+  vm.B
+  console.log(effectStack)
+  console.log("我是副作用2", effectStack)
+})
+vm.B = "3212312"
+console.log(effectStack)
