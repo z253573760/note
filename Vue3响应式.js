@@ -77,6 +77,6 @@ effect(() => {
   vm.B
   console.log("我是副作用")
 })
-React.effect(() => {
-  console.log("我是副作用")
-}, [vm.a, vm.B])
+// React.effect(() => {
+//   console.log("我是副作用")
+// }, [vm.a, vm.B])
