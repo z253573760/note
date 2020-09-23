@@ -41,7 +41,7 @@ class HandlerEventQueue {
   suspend() {
     this.isGoing = false;
   }
-  async continue() {
+  async continue () {
     this.isGoing = true;
     while (this.isGoing && this.cache.length) {
       await new Promise((r) => setTimeout(r, this.time));
@@ -80,28 +80,29 @@ function isObject(target) {
 /**
  * 响应式
  * @param {Object} target 被代理的对象
- * @param {Function} track 触发更新的钩子
+ * @param {Function} trigger 触发更新的钩子
  */
-function reactive(target, track) {
+function reactive(target, trigger) {
   if (!isObject(target)) {
     return target;
   }
   return new Proxy(target, {
     get(target, propKey, receiver) {
       const res = Reflect.get(target, propKey, receiver);
-      return reactive(res, track);
+      return reactive(res, trigger);
     },
     set(target, propKey, value, receiver) {
       let oldValue = target[propKey];
       if (value === oldValue)
         return Reflect.set(target, propKey, value, receiver);
-      track(target, propKey, value, receiver); // 当数据被更改 触发钩子
+      trigger(target, propKey, value, receiver); // 当数据被更改 触发钩子
       return Reflect.set(target, propKey, value, receiver);
     },
   });
 }
 
 const watchWeakMap = new WeakMap();
+
 function watch(key, cb, target = eventQueue) {
   const list = key.split(".");
   if (list.length > 1) {
@@ -130,8 +131,7 @@ const ref = (obj) =>
 
 // demo
 // 打印1-20
-const steps = Array.from(
-  {
+const steps = Array.from({
     length: 20,
   },
   (_, k) => (a = "xxx") => console.log(this, k, a)
