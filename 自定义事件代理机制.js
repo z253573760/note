@@ -82,25 +82,29 @@ function isObject(target) {
  * @param {Object} target 被代理的对象
  * @param {Function} trigger 触发更新的钩子
  */
-function reactive(target, trigger) {
+function reactive(target) {
   if (!isObject(target)) {
     return target;
   }
   return new Proxy(target, {
     get(target, propKey, receiver) {
       const res = Reflect.get(target, propKey, receiver);
-      return reactive(res, trigger);
+      return reactive(res);
     },
     set(target, propKey, value, receiver) {
       let oldValue = target[propKey];
       if (value === oldValue)
         return Reflect.set(target, propKey, value, receiver);
-      trigger(target, propKey, value, receiver); // 当数据被更改 触发钩子
+      trigger(target, propKey, value, oldValue); // 当数据被更改 触发钩子
       return Reflect.set(target, propKey, value, receiver);
     },
   });
 }
 
+function trigger(target, propKey, value, oldVal) {
+  const res = watchWeakMap.get(target);
+  res && res[propKey] && res[propKey](value, oldVal, target, propKey);
+}
 const watchWeakMap = new WeakMap();
 
 function watch(key, cb, target = eventQueue) {
@@ -123,11 +127,8 @@ function watch(key, cb, target = eventQueue) {
     });
   }
 }
-const ref = (obj) =>
-  reactive(obj, (target, propKey, value) => {
-    const res = watchWeakMap.get(target);
-    res && res[propKey] && res[propKey](value, target, propKey);
-  });
+// const ref = (obj) =>
+//   reactive(obj);
 
 // demo
 // 打印1-20
@@ -140,10 +141,10 @@ const steps = Array.from({
 //创建一个任务队列
 const eventQueue = new HandlerEventQueue(steps);
 //给这个任务队列添加观察者
-const countOff = ref(eventQueue);
+const countOff = reactive(eventQueue);
 
 //观察任务队列的执行状态
-watch("isGoing", (value) => {
+watch("isGoing", (value, oldvalue) => {
   console.log("isGoing=>执行改变", value, value ? "忙碌" : "空闲");
 });
 //观察任务队列的任务长度
