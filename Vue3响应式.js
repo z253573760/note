@@ -35,7 +35,6 @@ function effect(cb) {
   effect()
 }
 
-
 const targetMap = new WeakMap()
 /* 依赖收集：建立 数据&cb 映射关系 */
 function track(target, key) {
@@ -80,8 +79,7 @@ effect(() => {
 })
 effect(() => {
   vm.B
-  console.log(effectStack)
   console.log("我是副作用2", effectStack)
 })
 vm.B = "3212312"
-console.log(effectStack)
+// console.log(effectStack)
