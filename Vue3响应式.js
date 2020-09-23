@@ -33,7 +33,6 @@ function effect(cb) {
   }
   rxEffect()
   return rxEffect
-
 }
 const targetMap = new WeakMap()
 /* 依赖收集：建立 数据&cb 映射关系 */
@@ -78,5 +77,6 @@ effect(() => {
   vm.B
   console.log("我是副作用")
 })
-vm.a = "321"
-vm.B = "123"
+React.effect(() => {
+  console.log("我是副作用")
+}, [vm.a, vm.B])
