@@ -41,7 +41,7 @@ class HandlerEventQueue {
   suspend() {
     this.isGoing = false;
   }
-  async continue () {
+  async continue() {
     this.isGoing = true;
     while (this.isGoing && this.cache.length) {
       await new Promise((r) => setTimeout(r, this.time));
@@ -80,7 +80,6 @@ function isObject(target) {
 /**
  * 响应式
  * @param {Object} target 被代理的对象
- * @param {Function} trigger 触发更新的钩子
  */
 function reactive(target) {
   if (!isObject(target)) {
@@ -92,9 +91,8 @@ function reactive(target) {
       return reactive(res);
     },
     set(target, propKey, value, receiver) {
-      let oldValue = target[propKey];
-      if (value === oldValue)
-        return Reflect.set(target, propKey, value, receiver);
+      const oldValue = target[propKey];
+      if (value === oldValue) return true;
       trigger(target, propKey, value, oldValue); // 当数据被更改 触发钩子
       return Reflect.set(target, propKey, value, receiver);
     },
@@ -132,7 +130,8 @@ function watch(key, cb, target = eventQueue) {
 
 // demo
 // 打印1-20
-const steps = Array.from({
+const steps = Array.from(
+  {
     length: 20,
   },
   (_, k) => (a = "xxx") => console.log(this, k, a)
@@ -145,7 +144,13 @@ const countOff = reactive(eventQueue);
 
 //观察任务队列的执行状态
 watch("isGoing", (value, oldvalue) => {
-  console.log("isGoing=>执行改变", value, value ? "忙碌" : "空闲");
+  console.log(
+    "isGoing=>执行改变",
+    value,
+    value ? "忙碌" : "空闲",
+    "oldvalue:",
+    oldvalue
+  );
 });
 //观察任务队列的任务长度
 watch("cache.length", (value) => {
