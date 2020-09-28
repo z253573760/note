@@ -1,133 +1,261 @@
-// 1.Promise存在三个状态：pending（等待态）、fulfilled（成功态）、rejected（失败态）
 const STATUS_PENDING = 'pending'
 const STATUS_FULFILLED = 'fulfilled'
 const STATUS_REJECTED = 'rejected'
 
 
 class Promise {
-  constructor(executor) {
+  constructor(fn) {
     this.status = STATUS_PENDING
     this.value = undefined
     this.reason = undefined
-    // 成功存放的数组
-    this.onResolvedCallbacks = [];
-    // 失败存放法数组
-    this.onRejectedCallbacks = [];
-    const reslove = (value) => {
+    this.cb1 = []
+    this.cb2 = []
+    const reslove = res => {
       if (this.status === STATUS_PENDING) {
+        this.value = res
         this.status = STATUS_FULFILLED
-        this.value = value
-        this.onResolvedCallbacks.forEach(cb => {
-          cb(this.value)
-        })
+        this.cb1.forEach(cb => cb())
       }
     }
-    const reject = (reason) => {
+    const rejected = reason => {
       if (this.status === STATUS_PENDING) {
-        this.status = STATUS_REJECTED
         this.reason = reason
-        this.onRejectedCallbacks.forEach(cb => this.value = cb(this.reason))
+        this.status = STATUS_REJECTED
+        this.cb2.forEach(cb => cb())
       }
     }
     try {
-      executor(reslove, reject)
+      fn(reslove, rejected)
     } catch (err) {
-      reject(err)
+      rejected(err)
     }
   }
+  finally(fn) {
+    return this.then((res) => {
+      fn()
+      return this
+    }, err => {
+      fn()
+      return this
+    })
+
+  }
   then(onFulfilled, onRejected) {
-    // 这边要开始实现链式调用了  *链式调用的几个核心
-    // 1 then方法返回的必须是一个promise，这样才能保证链式调用。
-    // 2 如果then内部的回调函数执行结果依然是一个promise那就把这个promise的结果resolve出去。
-    // 3 任何一个promise必须是resolve之后才能走到它then方法，从而创建下一个的promise。
-    // 4 什么时候走成功回调？then中返回一个普通值或者一个成功的promise
-    // 5 什么时候走失败回调？返回一个失败的promise，或者抛出异常
-    onFulfilled = typeof onFulfilled === "function" ? onFulfilled : value => value
-    onRejected = typeof onRejected === "function" ? onRejected : reason => reason
-    const p2 = new Promise((reslove, reject) => {
-      if (this.status === STATUS_FULFILLED) {
-        setTimeout(() => { // setTimeout 是为了保证 P2已经执行完毕 在这里可以拿到P2的实例
-          try {
+    onFulfilled = typeof onFulfilled === "function" ? onFulfilled : v => v
+    onRejected = typeof onRejected === "function" ? onRejected : v => v
+    const p = new Promise((reslove, reject) => {
+      if (this.status === STATUS_PENDING) {
+        this.cb1.push(() => {
+          setTimeout(() => {
             const x = onFulfilled(this.value)
-            // x为2种情况我们需要处理,1种是promise对象,1种是普通值
-            // 1.如果x是promise对象,我们需要等待promise的状态更改成 非STATUS_PENDING后再继续执行
-            resolvePromise(p2, x, reslove, reject);
-          } catch (err) {
-            reject(err)
-          }
+            reslovePromise(p, x, reslove, reject)
+          }, 0);
+        })
+        this.cb2.push(() => {
+          setTimeout(() => {
+            const x = onRejected(this.reason)
+            reslovePromise(p, x, reslove, reject)
+          }, 0);
+        })
+      }
+      if (this.status === STATUS_FULFILLED) {
+        setTimeout(() => {
+          const x = onFulfilled(this.value)
+          reslovePromise(p, x, reslove, reject)
         }, 0);
       }
       if (this.status === STATUS_REJECTED) {
-        onRejected(this.reason)
-      }
-      if (this.status === STATUS_PENDING) {
-        this.onResolvedCallbacks.push(() => {
-          setTimeout(() => {
-            try {
-              const x = onFulfilled(this.value)
-              resolvePromise(p2, x, reslove, reject);
-            } catch (err) {
-              reject(err)
-            }
-          }, 0);
-        })
-        this.onRejectedCallbacks.push(() => onRejected(this.reslove))
+        setTimeout(() => {
+          const x = onRejected(this.reason)
+          reslovePromise(p, x, reslove, reject)
+        }, 0);
       }
     })
+    return p
+  }
 
-    return p2
-
+  catch (fn) {
+    return this.then(null, fn)
+  }
+  static reject(err) {
+    return new Promise((_, reject) => reject(err))
+  }
+  static reslove(res) {
+    return new Promise((r) => r(res))
+  }
+  static all(list) {
+    if (!Array.isArray(list)) {
+      return Promise.reject(new TypeError('类型错误'))
+    }
+    return new Promise((reslove, reject) => {
+      const result = []
+      let index = 0
+      for (let i = 0; i < list.length; i += 1) {
+        const item = list[i]
+        if (!(item instanceof Promise)) {
+          result[i] = item
+          index += 1
+          if (index === list.length) {
+            reslove(result)
+          }
+          continue
+        }
+        item.then(res => {
+          result[i] = res
+          index += 1
+          if (index === list.length) {
+            reslove(result)
+          }
+        }, err => {
+          reject(err)
+        })
+      }
+    })
+  }
+  static allSettled(list) {
+    if (!Array.isArray(list)) {
+      return Promise.reject(new TypeError('类型错误'))
+    }
+    const result = []
+    let index = 0
+    return new Promise((reslove, reject) => {
+      for (let i = 0; i < list.length; i += 1) {
+        let item = list[i]
+        if (!(item instanceof Promise)) {
+          item = new Promise((reslove) => reslove(item))
+        }
+        item.then(() => {
+          result[i] = {
+            status: item.status,
+            value: item.value
+          }
+          index += 1
+          if (index === list.length) {
+            reslove(result)
+          }
+        }, () => {
+          result[i] = {
+            status: item.status,
+            reason: item.reason
+          }
+          index += 1
+          if (index === list.length) {
+            reslove(result)
+          }
+        })
+      }
+    })
   }
 }
-/**
- * 实现链式调用
- * @param {*} promise2  就是新生成的promise
- * @param {*} x         我们要处理的目标
- * @param {*} reslove   promise2的resolve, 执行之后promise2的状态就变为成功了，就可以在它的then方法的成功回调中拿到最终结果
- * @param {*} reject    promise2的reject, 执行之后promise2的状态就变为失败，在它的then方法的失败回调中拿到失败原因
- */
-function resolvePromise(promise2, x, reslove, reject) {
-  //循环引用 规避
-  if (promise2 === x) {
-    return reject(new TypeError("循环引用"))
-  }
 
-  if (x instanceof Promise) { // 如果x是一个promise
-    if (x.state === STATUS_PENDING) { //
-      x.then(y => {
-        resolvePromise(promise2, y.reslove, reject)
-      }, reason => {
-        reject(reason)
-      })
-    } else {
-      x.then(reslove, reject)
-    }
+
+function reslovePromise(p, x, reslove, reject) {
+  if (p === x) {
+    reject(new TypeError("循环引用"))
     return
   }
-  reslove(x)
+  if (!(x instanceof Promise)) {
+    reslove(x)
+    return
+  }
+  if (x.status === STATUS_PENDING) {
+    x.then(y => {
+        reslovePromise(x, y, reslove, reject)
+      },
+      y => {
+        reject(y)
+      }
+    )
+    return
+  }
+  if (x.status === STATUS_FULFILLED) {
+    reslove(x.value)
+    return
+  }
+  if (x.status === STATUS_REJECTED) {
+    reject(x.reason)
+    return
+  }
 }
 
-const b = (x) => new Promise((reslove, reject) => {
-  setTimeout(() => {
-    reslove("拉拉啊了" + x)
-  }, 3000);
-})
 
+function demo1() {
+  const p3 = new Promise((reslove) => {
+    setTimeout(() => {
+      reslove(3)
+    }, 5000);
+  })
+  const p = new Promise((reslove) => {
+      setTimeout(() => {
+        reslove(1)
+      }, 5000);
+    })
+    .finally(res => {
+      console.log("finally", res)
+    })
+    .then(res => {
+      console.log('res', res)
+      return "321"
+    }).then(res => {
+      console.log('res2', res)
+      return new Promise(reslove => {
+        setTimeout(() => {
+          reslove(2)
+        }, 5000);
+      })
+    }).then(res => {
+      console.log('res3', res)
+      return p3
+    }).then(res => {
+      console.log('res4', res)
+      return new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reject("err1")
+        }, 5000);
+      })
+    })
+    .then(res => {
+      console.log('res5', res)
+    }, err => {
+      console.log('reject-err', err)
+      return new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reject("err2")
+        }, 5000);
+      })
+    }).then(res => {
+      console.log("res6", res)
+    }, err => {
+      console.log('reject-err2', err)
+      return new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reject("err3")
+        }, 5000);
+      })
+    }).finally((res) => {
+      console.log("end-finally", res)
+    }, err => {
+      console.log("err-fin", err)
+    })
+    .catch(err => {
+      console.log("catch-err", err)
+    }).then(res => {
+      console.log("end", res)
+    })
+}
 
-b(1).then(res => {
-  console.log('res1', res)
-  return b(2)
-}).then(res => {
-  console.log('res2', res)
-  return "返回一个普通值"
-}).then((res) => {
-  console.log('res3', res)
-})
-// .then(res => {
-//   console.log('res2', res)
-//   return b(3)
-// })
-// .then(res => {
-//   console.log('res3', res)
-//   return b(4)
-// })
+function demo2() {
+  const p = (time) => new Promise((r, j) => setTimeout(() => {
+    j(time)
+  }, time * 1000))
+
+  Promise.allSettled([1, 2, 3, p(4), p(5), 6]).then(res => {
+    console.log("res", res)
+  }, err => {
+    console.log("reject", err)
+  }).catch(err => {
+    console.log("err", err)
+  })
+
+}
+demo1()

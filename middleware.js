@@ -1,4 +1,3 @@
-
 let res
 class Middleware {
   constructor(cb) {
