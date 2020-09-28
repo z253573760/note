@@ -32,13 +32,12 @@ class Promise {
   }
   finally(fn) {
     return this.then((res) => {
-      fn()
-      return this
+      return Promise.reslove(fn()).then(() => res)
     }, err => {
-      fn()
-      return this
+      return Promise.reslove(fn()).then(() => {
+        throw err
+      })
     })
-
   }
   then(onFulfilled, onRejected) {
     onFulfilled = typeof onFulfilled === "function" ? onFulfilled : v => v
@@ -149,6 +148,7 @@ class Promise {
 }
 
 
+
 function reslovePromise(p, x, reslove, reject) {
   if (p === x) {
     reject(new TypeError("循环引用"))
@@ -192,6 +192,9 @@ function demo1() {
     })
     .finally(res => {
       console.log("finally", res)
+      return new Promise((res) => {
+        res(123)
+      })
     })
     .then(res => {
       console.log('res', res)
@@ -241,8 +244,11 @@ function demo1() {
       console.log("catch-err", err)
     }).then(res => {
       console.log("end", res)
+    }).then(res => {
+      console.log('xxxx', res)
     })
 }
+
 
 function demo2() {
   const p = (time) => new Promise((r, j) => setTimeout(() => {
