@@ -1,4 +1,4 @@
-const list = [1, 99, 2, 33, 444, 57, 3, 4, 3, 5, 6];
+const list = [1, 2, 4, 5, 6, 7, 3];
 function sort1(list) {
   list = [...list];
   for (let i = 1; i < list.length; i += 1) {
@@ -16,6 +16,27 @@ function sort1(list) {
   }
   return list;
 }
+function sort2(list) {
+  function searchOf(start, end, target) {
+    while (start >= end) {
+      //
+    }
+  }
+  function move(start, end, target) {
+    for (let i = end; i > start; i -= 1) {
+      list[i] = list[i - 1];
+    }
+    list[start] = target;
+  }
+}
+// const res2 = sort1(list);
+// console.log(res2);
 
-const res2 = sort1(list);
-console.log(res2);
+function move(start, end, target) {
+  for (let i = end; i > start; i -= 1) {
+    list[i] = list[i - 1];
+  }
+  list[start] = target;
+}
+
+console.log(list);

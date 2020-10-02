@@ -1,4 +1,4 @@
-const list = [1, 2, 3, 4, 5, 6, 7, 11];
+const list = [1, 1, 1, 2, 3, 4, 5, 6, 7, 11];
 function indexOf(list, target, diff = 0) {
   console.log("diff", diff);
   let len = list.length;
@@ -18,14 +18,18 @@ function indexOf(list, target, diff = 0) {
   return -1;
 }
 
-function indexOf2(list, target) {
+function indexOfleft(list, target) {
   let start = 0;
   let end = list.length - 1;
   while (start <= end) {
     const middIndex = Math.floor((start + end) / 2);
     const midd = list[middIndex];
     if (target === midd) {
-      return middIndex;
+      if (list[middIndex - 1] === target) {
+        end = middIndex;
+      } else {
+        return middIndex;
+      }
     } else if (target > midd) {
       start = middIndex + 1;
     } else if (target < midd) {
@@ -34,5 +38,5 @@ function indexOf2(list, target) {
   }
   return -1;
 }
-const res2 = indexOf2(list, 111);
+const res2 = indexOfleft(list, 2);
 console.log(res2);
