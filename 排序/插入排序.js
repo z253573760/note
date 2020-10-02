@@ -8,11 +8,14 @@ function sort1(list) {
       const b = list[cur - 1];
       if (a < b) {
         [list[cur - 1], list[cur]] = [list[cur], list[cur - 1]];
+        cur -= 1;
+      } else {
+        cur = -1;
       }
-      cur -= 1;
     }
   }
   return list;
 }
-const res1 = sort1(list);
-console.log(res1);
+
+const res2 = sort1(list);
+console.log(res2);
