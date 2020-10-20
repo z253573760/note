@@ -26,10 +26,8 @@
 //   [5]
 // ]
 var combinationSum2 = function (candidates, target) {
-  const used = {};
   candidates = candidates.sort((a, b) => a - b);
   const result = [];
-  console.log("candidates", candidates);
   function dfs(res = [], sum = 0, index = 0) {
     if (sum > target) return;
     if (sum === target) {
@@ -38,23 +36,11 @@ var combinationSum2 = function (candidates, target) {
     }
     for (let i = index; i < candidates.length; i += 1) {
       const item = candidates[i];
-      if (item === 7) {
-        console.log({
-          i,
-          index,
-          res,
-          sum,
-        });
-      }
       if (candidates[i - 1] == candidates[i] && i - 1 >= index) continue;
-      if (used[i]) continue;
       res.push(item);
-      //   used[i] = true;
       sum += item;
-
-      dfs(res, sum, index + 1);
+      dfs(res, sum, i + 1);
       res.pop();
-      //  used[i] = false;
       sum -= item;
     }
   }
