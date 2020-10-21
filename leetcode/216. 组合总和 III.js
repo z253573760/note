@@ -14,12 +14,27 @@
 // 输入: k = 3, n = 9
 // 输出: [[1,2,6], [1,3,5], [2,3,4]]
 var combinationSum3 = function (k, n) {
-  const list = Array.from({ length: 9 }).map((_, index) => index + 1);
   const result = [];
-  function bar(k, n) {
-    const res = [];
-    for (const item of list) {
-      //
+  function dfs(start = 1, res = [], sum = 0) {
+    if (start > 9 - k + 1 && res.length === 0) return;
+    if (res.length > k) return;
+    if (sum > n) return;
+    if (sum === n && res.length === k) {
+      result.push([...res]);
+      return;
+    }
+
+    for (let i = start; i < 10; i += 1) {
+      res.push(i);
+      sum += i;
+      dfs(i + 1, res, sum);
+      res.pop();
+      sum -= i;
     }
   }
+  dfs();
+  return result;
 };
+
+const res = combinationSum3(9, 45);
+console.log(res);

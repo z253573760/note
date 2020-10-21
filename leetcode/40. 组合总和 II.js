@@ -45,11 +45,12 @@ var combinationSum2 = function (candidates, target) {
     }
   }
   dfs();
-  console.log(result);
+
   return result;
 };
 
 const res = combinationSum2([10, 1, 2, 7, 6, 1, 5], 8);
+console.log(res);
 //  1
 //  2 3 7 6
 //
