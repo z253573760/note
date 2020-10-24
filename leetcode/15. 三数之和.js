@@ -14,6 +14,8 @@
 // ]
 // 通过次数350,969提交次数1,175,685
 // 在真实的面试中遇到过这道题？
+
+// 回溯
 var threeSum2 = function (nums) {
   const result = [];
   const used = [];
@@ -39,6 +41,7 @@ var threeSum2 = function (nums) {
   return result;
 };
 
+//双指针
 var threeSum = function (nums) {
   nums = nums.sort((a, b) => a - b);
   const result = [];
