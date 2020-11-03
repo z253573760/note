@@ -31,13 +31,14 @@ function effect(cb, opts = {}) {
     try {
       effectStack.push(effect);
       return cb();
+    } catch (e) {
+      console.log("e", e);
     } finally {
       effectStack.pop();
     }
   };
-  if (!opts.computed) {
-    effect();
-  }
+
+  effect();
   return effect;
 }
 
@@ -70,13 +71,11 @@ function trigger(target, key) {
   deps.forEach((effect) => effect());
 }
 function computed(cb) {
-  const run = effect(cb, { computed: true });
-  const obj = {
+  return {
     get value() {
-      return run();
+      return cb();
     },
   };
-  return obj;
 }
 /**----------------------------------------------------------------------- */
 //下面开始测试
@@ -91,7 +90,7 @@ const obj = {
 const vm = reactive(obj);
 const double = computed(() => vm.count * 2);
 effect(() => {
-  console.log(vm.count, double.value);
+  console.log(double.value);
 });
 vm.count += 1;
 vm.count += 1;
@@ -99,3 +98,7 @@ vm.count += 1;
 vm.count += 1;
 vm.count += 1;
 vm.count += 1;
+
+// setInterval(() => {
+//   vm.count += 1;
+// }, 1000);
