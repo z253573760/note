@@ -24,15 +24,21 @@ function reactive(target) {
   });
 }
 const effectStack = [];
+
 /* 声明响应函数cb(依赖响应式数据) */
-function effect(cb) {
-  const effect = function () {
-    effectStack.push(effect);
-    cb();
-    effectStack.pop();
-    return cb;
+function effect(cb, opts = {}) {
+  const effect = () => {
+    try {
+      effectStack.push(effect);
+      return cb();
+    } finally {
+      effectStack.pop();
+    }
   };
-  effect();
+  if (!opts.computed) {
+    effect();
+  }
+  return effect;
 }
 
 const targetMap = new WeakMap();
@@ -51,35 +57,45 @@ function track(target, key) {
     deps = new Set();
     depsMap.set(key, deps);
   }
+  // 双向存储
   deps.add(effectFn);
 }
 /* 触发更新：根据映射关系，执行cb */
 function trigger(target, key) {
   //console.log('触发更新：根据映射关系，执行cb ')
   const depsMap = targetMap.get(target);
-  if (depsMap) {
-    const deps = depsMap.get(key);
-    if (deps) {
-      deps.forEach((effect) => effect());
-    }
-  }
+  if (!depsMap) return;
+  const deps = depsMap.get(key);
+  if (!deps) return;
+  deps.forEach((effect) => effect());
 }
+function computed(cb) {
+  const run = effect(cb, { computed: true });
+  const obj = {
+    get value() {
+      return run();
+    },
+  };
+  return obj;
+}
+/**----------------------------------------------------------------------- */
+//下面开始测试
 const obj = {
   a: "A",
   B: {
     c: "c",
   },
+  count: 10,
   list: [1, 2, 3, 45, 8],
 };
 const vm = reactive(obj);
+const double = computed(() => vm.count * 2);
 effect(() => {
-  vm.a;
-  vm.B;
-  console.log("我是副作用", effectStack);
+  console.log(vm.count, double.value);
 });
-effect(() => {
-  vm.B;
-  console.log("我是副作用2", effectStack);
-});
-vm.B = "3212312";
-// console.log(effectStack)
+vm.count += 1;
+vm.count += 1;
+vm.count += 1;
+vm.count += 1;
+vm.count += 1;
+vm.count += 1;
