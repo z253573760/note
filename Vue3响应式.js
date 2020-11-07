@@ -37,7 +37,6 @@ function effect(cb, opts = {}) {
       effectStack.pop();
     }
   };
-
   effect();
   return effect;
 }
@@ -80,10 +79,6 @@ function computed(cb) {
 /**----------------------------------------------------------------------- */
 //下面开始测试
 const obj = {
-  a: "A",
-  B: {
-    c: "c",
-  },
   count: 10,
   list: [1, 2, 3, 45, 8],
 };
@@ -98,7 +93,3 @@ vm.count += 1;
 vm.count += 1;
 vm.count += 1;
 vm.count += 1;
-
-// setInterval(() => {
-//   vm.count += 1;
-// }, 1000);
