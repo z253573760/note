@@ -48,3 +48,37 @@ function $new(fn, ...args) {
 }
 
 const res = $new(Student, "cc", 18);
+
+Array.prototype.$map = function (fn) {
+  const list = new Array(this.length);
+  for (let i = 0; i < this.length; i += 1) {
+    list[i] = fn(this[i], i, this);
+  }
+  return list;
+};
+
+Array.prototype.$forEach = function (fn) {
+  for (let i = 0; i < this.length; i += 1) {
+    fn(this[i], i, this);
+  }
+};
+
+Array.prototype.$reduce = function name(fn, initVal) {
+  for (let i = 0; i < this.length; i += 1) {
+    initVal = fn(initVal, this[i], i, this);
+  }
+  return initVal;
+};
+
+Array.prototype.$reduceRight = function name(fn, initVal) {
+  for (let i = this.length; i >= 0; i -= 1) {
+    initVal = fn(initVal, this[i], i, this);
+  }
+  return initVal;
+};
+
+const a = [1, 2, 3, 4].reduce(function (prev, cur) {
+  prev[cur] = true;
+  return prev;
+}, {});
+console.log(a);
