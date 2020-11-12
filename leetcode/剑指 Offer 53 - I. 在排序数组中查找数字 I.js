@@ -35,7 +35,6 @@ var search = function (nums, target) {
     if (end === start) return false;
   };
   const index = search2(0, nums.length - 1);
-  console.log(index);
   if (!index && index !== 0) return 0;
   let count = 0;
   for (let i = index; i < nums.length; i += 1) {
