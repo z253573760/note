@@ -33,11 +33,12 @@ const data = [
     ],
   },
 ];
-function pailie(list) {
+
+function pailie(list, cb = (v) => v) {
   const result = [];
   function dfs(data, res = []) {
     if (!data) {
-      result.push([...res]);
+      result.push(cb([...res]));
       return;
     }
     for (const item of data) {
@@ -49,5 +50,17 @@ function pailie(list) {
   dfs(list);
   return result;
 }
-const res = pailie(data);
-console.log("res", res);
+
+/**
+ * 格式化
+ * @param {Array} list //[a,b,c,d]
+ */
+const parse = (list) => ({ name: list.join("/") });
+
+//测试
+const res = pailie(data, parse);
+//或者
+const res2 = pailie(data).map(parse);
+console.log(res);
+console.log(res2);
+console.log(JSON.stringify(res) === JSON.stringify(res2));
