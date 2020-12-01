@@ -39,11 +39,7 @@
     integrity="sha512-h3aCJRk6tEHugDYUidF7GqixhzgeXSiSdq5U+5oLIJtIncSQq6eev48qqYfuTdrsH5Q1eO4IAmyJGDwzRaWNNQ=="
     src="https://lib.baomitu.com/vue/2.6.12/vue.common.dev.js"></script>
   <script>
-    let timer
-    const diff = 20
-
-    function debounceAndThrottle(fn, delay = 60, diff = 500) {
-      console.log("fn", arguments)
+    function debounceAndThrottle(fn, delay = 60, diff = 300) {
       let prev = new Date().getTime()
       let timer = null
       return (...args) => {
@@ -51,7 +47,7 @@
         const cur = new Date().getTime()
         if (cur - prev > diff) {
           prev = cur
-          return fn(...args)
+          fn(...args)
         }
         timer = setTimeout(() => {
           prev = cur
@@ -67,16 +63,16 @@
           itemHeight: 30, //每一列的高度
           showNum: 10, //显示几条数据
           start: 0, //滚动过程显示的开始索引
-          end: 10 + diff, //滚动过程显示的结束索引,
-          diff,
+          end: 10, //滚动过程显示的结束索引,
+          diff: 20,
           hadnlerScrollListener: null
         }
       },
       computed: {
         //显示的数组，用计算属性计算
         showList() {
-          const start = this.start - diff >= 0 ? this.start - diff : 0
-          const list = this.list.slice(start, this.end + diff);
+          const start = this.start - this.diff >= 0 ? this.start - this.diff : 0
+          const list = this.list.slice(start, this.end + this.diff);
           console.log('list', list.length)
           return list
         }
@@ -100,7 +96,7 @@
           //结束索引
           this.end = this.start + this.showNum;
           //绝对定位对相对定位的偏移量
-          const start = this.start - diff >= 0 ? this.start - diff : 0
+          const start = this.start - this.diff >= 0 ? this.start - this.diff : 0
           this.$refs.list.style.top = start * this.itemHeight + 'px';
         }
       }
