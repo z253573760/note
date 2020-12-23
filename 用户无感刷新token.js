@@ -1,32 +1,29 @@
 // uni中的使用
 
-/** 
+/**
  * 刷新token的请求
  */
 async function refreshToken() {
-  console.log("我去刷新token了 兄弟们等等我")
+  console.log("我去刷新token了 兄弟们等等我");
   const data = await request({
-    url: '/auth',
+    url: "/auth",
     method: "post",
     data: {
       grant_type: "RefreshToken",
-      refresh_token: uni.getStorageSync('refresh_token')
-    }
-  })
-  const {
-    access_token,
-    refresh_token,
-    expires_in
-  } = data
-  uni.setStorageSync('token', access_token);
-  uni.setStorageSync('refresh_token', refresh_token)
-  uni.setStorageSync('expires_in', `${expires_in}`) //
-  uni.setStorageSync("time", `${new Date().getTime()+ expires_in}`) // 记录过期时间
-  store.commit("user/SAVE", { // 替换掉当前的token
+      refresh_token: uni.getStorageSync("refresh_token"),
+    },
+  });
+  const { access_token, refresh_token, expires_in } = data;
+  uni.setStorageSync("token", access_token);
+  uni.setStorageSync("refresh_token", refresh_token);
+  uni.setStorageSync("expires_in", `${expires_in}`); //
+  uni.setStorageSync("time", `${new Date().getTime() + expires_in}`); // 记录过期时间
+  store.commit("user/SAVE", {
+    // 替换掉当前的token
     key: "token",
-    value: access_token
-  })
-  return data
+    value: access_token,
+  });
+  return data;
 }
 
 /**
@@ -35,11 +32,7 @@ async function refreshToken() {
  * @param {string} url        请求的路径
  * @param {Object} data       请求的参数
  */
-function request({
-  method = "get",
-  url,
-  data = {}
-}) {
+function request({ method = "get", url, data = {} }) {
   return new Promise((resolve, reject) => {
     const token = store.state.user.token;
     uni.request({
@@ -75,47 +68,41 @@ function request({
   });
 }
 
-let lock = false // 全局锁
-let refreshTokenPromise
+let lock = false; // 全局锁
+let refreshTokenPromise;
 /**
  * 主函数 //茄子刷新大法
  * @param {string} method     请求的方式  get post put delete patch put
  * @param {string} url        请求的路径
  * @param {Object} data       请求的参数
  */
-export default async function handler({
-  url,
-  method = "get",
-  data = {}
-}) {
-  const opts = {
-    url,
-    method,
-    data
-  }
-  if (url === "/auth") { // 这边随意了 主要是针对不需要token的请求进行处理
-    return request(opts)
+export default async function handler() {
+  if (url === "/auth") {
+    // 这边随意了 主要是针对不需要token的请求进行处理
+    return request(...arguments);
   }
   // 开始正文
   // 先获取当前时间 和 过期时间 准备进行比较
-  const lastTime = uni.getStorageSync("time") || 0
-  const now = new Date().getTime()
-  if (now > lastTime && lock === false) { //判断是否过期和是否有刷新token的动作  如果过期并且还没有开始刷新token 就开始进行刷新token的处理 
-    lock = true //先上锁
-    refreshTokenPromise = refreshToken() //开始刷新token 并且把刷新token的promise保存到全局
-    await refreshTokenPromise //等待刷新token结束后 解锁
-    lock = false
+  const lastTime = uni.getStorageSync("time") || 0;
+  const now = new Date().getTime();
+  if (now > lastTime && lock === false) {
+    //判断是否过期和是否有刷新token的动作  如果过期并且还没有开始刷新token 就开始进行刷新token的处理
+    lock = true; //先上锁
+    refreshTokenPromise = refreshToken(); //开始刷新token 并且把刷新token的promise保存到全局
+    await refreshTokenPromise; //等待刷新token结束后 解锁
+    lock = false;
   }
-  if (lock === true) { //发现有锁 说明当前的token 已经过期 并且去刷新token的异步操作还没结束
-    refreshTokenPromise = refreshTokenPromise.then(() => request(opts)) //利用 promise 的队列机制 把请求添加的 全局对象的promise队列中
-    return refreshTokenPromise
+  if (lock === true) {
+    //发现有锁 说明当前的token 已经过期 并且去刷新token的异步操作还没结束
+    refreshTokenPromise = refreshTokenPromise.then(() => request(...arguments)); //利用 promise 的队列机制 把请求添加的 全局对象的promise队列中
+    return refreshTokenPromise;
   }
   // token没过期啥也不管=>正常请求
-  return request(opts)
+  return request(...arguments);
 }
 // 场景解析
-// A, B, C 三个异步请求 都需要刷新token现在同时请求 
+// A, B, C 三个异步请求 都需要刷新token现在同时请求
 // 1. A进入handler函数发现需要刷新token走 if (now > lastTime && lock === false)的支线,先上锁,并且把刷新token的promise存到全局
-// 2. 与此同时B,C也跟着进来了,发现现在被锁住了, 走if（lock === true）的支线,只能排在全局promise的队列后面,等待刷新token的promise结束 
-// 3. A由于在判断中,发现需要刷新token然后一直在在等待刷新token的promise结束(此时锁已经解开),直接走 return request(otps)的支线 
+// 2. 与此同时B,C也跟着进来了,发现现在被锁住了, 走if（lock === true）的支线,只能排在全局promise的队列后面,等待刷新token的promise结束
+// 3. A由于在判断中,发现需要刷新token然后一直在在等待刷新token的promise结束(此时锁已经解开),直接走 return request(otps)的支线
 // 4. 刷新token的promise结束了,promise队列中的B,C也跟着执行了
