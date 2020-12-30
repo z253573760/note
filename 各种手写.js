@@ -82,3 +82,23 @@ const a = [1, 2, 3, 4].reduce(function (prev, cur) {
   return prev;
 }, {});
 console.log(a);
+
+function copyTextHandler(text) {
+  var input = document.createElement("input");
+  var currentFocus = document.activeElement;
+  document.body.appendChild(input);
+  input.readOnly = "readonly";
+  input.value = text;
+  input.focus();
+
+  if (input.setSelectionRange) {
+    input.setSelectionRange(0, input.value.length);
+  } else {
+    input.select();
+  }
+  document.execCommand("copy");
+  input.blur();
+  document.body.removeChild(input);
+  currentFocus.focus();
+  currentFocus.blur();
+}
