@@ -46,7 +46,7 @@ fn("d").then(suceessHandler, errorHadnler); // fn("c") 被清除
 setTimeout(() => {
   fn.cancel("手动取消防抖！！！"); // fn("d") 被手动取消了
 }, 2000);
-// 最终打印 我是被手动取消的 { message: '取消防抖了！！！', [Symbol(__v__is__cancel)]:true }
+// 最终打印 我是被手动取消的 { message: '取消防抖了！！！' }
 ```
 
 ### 参数

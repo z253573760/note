@@ -22,10 +22,8 @@ function debounce(fn, delay = 3000, timer = null) {
   handler.cancel = (message = "我被取消了") => {
     clearTimeout(timer);
     timer = null;
-    resolveHandle({
-      message,
-      [__v__is__cancel]: true,
-    });
+    const data = Object.create({ [__v__is__cancel]: true });
+    resolveHandle(data);
   };
   return handler;
 }
