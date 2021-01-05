@@ -3,6 +3,9 @@ function debounce(fn, delay = 3000, timer = null) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
   }
+  if (typeof delay !== "number") {
+    throw TypeError("[debounce-err] : 必须是一个有效的number对象");
+  }
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandle;
   const handler = (...args) => {
