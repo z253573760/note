@@ -13,7 +13,6 @@
 #### 基础防抖
 
 ```js
-let count = 1;
 const fn = debouce(console.log, 1000);
 fn(1);
 fn(2);
@@ -26,7 +25,7 @@ fn(6); // 1秒后打印6
 #### 取消防抖
 
 ```js
-const fn = debouce(console.log, 1000); // fn 执行后会返回一个promise
+const fn = debouce(console.log, 3000); // fn 执行后会返回一个promise
 const suceessHandler = (res) => {
   //成功回调
   console.log("debounce1", debounce.isCancel(res));
@@ -37,8 +36,8 @@ const suceessHandler = (res) => {
     console.log("完整执行", res);
   }
 };
-// 失败回调
-const errorHadnler = (err) => console.log("err", err);
+
+const errorHadnler = (err) => console.log("err", err); // 失败回调
 
 fn("a").then(suceessHandler, errorHadnler); //
 fn("b").then(suceessHandler, errorHadnler); // fn("a") 被清除
