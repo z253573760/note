@@ -23,6 +23,7 @@ function debounce(fn, delay = 3000, timer = null) {
     clearTimeout(timer);
     timer = null;
     const data = Object.create({ [__v__is__cancel]: true });
+    data.message = message;
     resolveHandle(data);
   };
   return handler;
