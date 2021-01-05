@@ -1,5 +1,5 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
-function debounce(fn, delay = 3000) {
+function debounce(fn, delay = 500, throttle = 600) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
   }
@@ -9,27 +9,42 @@ function debounce(fn, delay = 3000) {
   // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandler; // 获取promise的控制权
+  let prevTime = 0;
   let timer; // 定时器句柄
+  let isCancel; // 是否取消执行
+  const cancelData = Object.create({ [__v__is__cancel]: true });
   const handler = (...args) => {
-    clearTimeout(timer);
-    return new Promise((reslove, reject) => {
+    // if (isCancel) return Promise.resolve(cancelData);
+    return new Promise(async (reslove, reject) => {
+      clearTimeout(timer);
       resolveHandler = reslove; // 保存promise的控制权
-      timer = setTimeout(async () => {
+      if (isCancel) reslove(cancelData);
+      const curTime = new Date().getTime();
+      if (throttle && curTime - prevTime > throttle) {
+        prevTime = curTime;
         try {
-          const res = await fn(...args);
-          reslove(res);
+          reslove(await fn(...args));
         } catch (err) {
           reject(err);
         }
-      }, delay);
+      } else {
+        timer = setTimeout(async () => {
+          try {
+            const res = await fn(...args);
+            reslove(res);
+          } catch (err) {
+            reject(err);
+          }
+        }, delay);
+      }
     });
   };
   handler.cancel = (message = "我被取消了") => {
     clearTimeout(timer);
     timer = null;
-    const data = Object.create({ [__v__is__cancel]: true });
-    data.message = message;
-    resolveHandler(data); //强制结束promise
+    cancelData.message = message;
+    isCancel = true;
+    resolveHandler(cancelData); //强制结束promise
   };
   return handler;
 }
@@ -41,7 +56,7 @@ const fn = debounce(
     new Promise((r, j) =>
       setTimeout(() => {
         r(a + count);
-      }, 5000)
+      }, 3000)
     )
 );
 
@@ -54,10 +69,15 @@ const suceessHandler = (res) => {
   }
 };
 const errorHadnler = (err) => console.log("err", err);
-fn("a").then(suceessHandler, errorHadnler);
-fn("b").then(suceessHandler, errorHadnler);
-fn("c").then(suceessHandler, errorHadnler);
-fn("d").then(suceessHandler, errorHadnler);
+// fn("a").then(suceessHandler, errorHadnler);
+// fn("b").then(suceessHandler, errorHadnler);
+// fn("c").then(suceessHandler, errorHadnler);
+// fn("d").then(suceessHandler, errorHadnler);
+
+setInterval(() => {
+  count += 1;
+  fn(count).then(suceessHandler, errorHadnler);
+}, 1000);
 setTimeout(() => {
   fn.cancel("取消防抖了！！！");
-}, 2000);
+}, 10000);
