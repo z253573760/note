@@ -6,13 +6,14 @@ function debounce(fn, delay = 3000) {
   if (typeof delay !== "number") {
     throw TypeError("[debounce-err] : 必须是一个有效的number对象");
   }
+  // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
-  let resolveHandler;
-  let timer;
+  let resolveHandler; // 获取promise的控制权
+  let timer; // 定时器句柄
   const handler = (...args) => {
     clearTimeout(timer);
     return new Promise((reslove, reject) => {
-      resolveHandler = reslove;
+      resolveHandler = reslove; // 保存promise的控制权
       timer = setTimeout(async () => {
         try {
           const res = await fn(...args);
@@ -28,7 +29,7 @@ function debounce(fn, delay = 3000) {
     timer = null;
     const data = Object.create({ [__v__is__cancel]: true });
     data.message = message;
-    resolveHandler(data);
+    resolveHandler(data); //强制结束promise
   };
   return handler;
 }
