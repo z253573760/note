@@ -1,5 +1,5 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
-export function debounce(fn, delay = 3000, timer = null) {
+function debounce(fn, delay = 3000, timer = null) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("debounce-err:必须是一个函数或者Promise");
   }

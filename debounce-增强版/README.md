@@ -47,6 +47,7 @@ fn("d").then(suceessHandler, errorHadnler); // fn("c") 被清除
 setTimeout(() => {
   fn.cancel("手动取消防抖！！！"); // fn("d") 被手动取消了
 }, 2000);
+// 最终打印 我是被手动取消的 { message: '取消防抖了！！！', [Symbol(__v__is__cancel)]:true }
 ```
 
 ### 参数
@@ -54,12 +55,12 @@ setTimeout(() => {
 | 参数     | 说明                     | 类型                  | 默认值 |
 | -------- | ------------------------ | --------------------- | ------ |
 | fn       | 防抖的函数               | _Function \| Promise_ | -      |
-| delay    | 延迟的时间(ms)           | \_Number              | - 300  |
-| icCancel | 判断是否是一个取消的结果 | \Function             |        |
+| delay    | 延迟的时间(ms)           | Number                | 300    |
+| icCancel | 判断是否是一个取消的结果 | Function              | -      |
 
 ### 返回值
 
 | 参数   | 说明               | 类型     | 默认值 |
 | ------ | ------------------ | -------- | ------ |
-| return | 包装过后的防抖函数 | Function |        |
-| cancel | 取消防抖的函数     | Function |        |
+| return | 包装过后的防抖函数 | Function | -      |
+| cancel | 取消防抖的函数     | Function | -      |
