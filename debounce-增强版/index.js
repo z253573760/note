@@ -43,7 +43,6 @@ const fn = debounce(
       }, 5000)
     )
 );
-console.log("debounce", debounce.isCancel);
 
 const suceessHandler = (res) => {
   console.log("debounce1", debounce.isCancel(res));
