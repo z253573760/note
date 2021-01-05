@@ -1,7 +1,7 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
 function debounce(fn, delay = 3000, timer = null) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
-    throw TypeError("debounce-err:必须是一个函数或者Promise");
+    throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
   }
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandle;
