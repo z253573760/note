@@ -1,5 +1,5 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
-function debounce(fn, delay = 3000, timer = null) {
+function debounce(fn, delay = 3000) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
   }
@@ -7,11 +7,12 @@ function debounce(fn, delay = 3000, timer = null) {
     throw TypeError("[debounce-err] : 必须是一个有效的number对象");
   }
   debounce.isCancel = (target) => !!target[__v__is__cancel];
-  let resolveHandle;
+  let resolveHandler;
+  let timer;
   const handler = (...args) => {
     clearTimeout(timer);
     return new Promise((reslove, reject) => {
-      resolveHandle = reslove;
+      resolveHandler = reslove;
       timer = setTimeout(async () => {
         try {
           const res = await fn(...args);
@@ -27,7 +28,7 @@ function debounce(fn, delay = 3000, timer = null) {
     timer = null;
     const data = Object.create({ [__v__is__cancel]: true });
     data.message = message;
-    resolveHandle(data);
+    resolveHandler(data);
   };
   return handler;
 }
