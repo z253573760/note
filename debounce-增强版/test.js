@@ -9,8 +9,8 @@ const fn = debounce(
         r(a + count);
       }, 3000)
     ),
-  500,
-  8000
+  2000,
+  3000
 );
 
 const suceessHandler = (res) => {

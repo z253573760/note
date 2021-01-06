@@ -11,6 +11,7 @@ async function runner({ fn, reslove, reject, isCancel, cancelData }, ...args) {
     reject(err);
   }
 }
+
 module.exports = function debounce(fn, delay = 300, throttle = 0) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
@@ -29,7 +30,6 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
   let isCancel; // 是否取消执行
   const cancelData = Object.create({ [__v__is__cancel]: true });
   const handler = (...args) => {
-    // if (isCancel) return Promise.resolve(cancelData);
     return new Promise((reslove, reject) => {
       clearTimeout(timer);
       resolveHandler = reslove; // 保存promise的控制权
@@ -42,7 +42,7 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
       };
       const curTime = new Date().getTime();
       if (throttle && curTime - prevTime > throttle) {
-        //节流
+        //节流;
         prevTime = curTime;
         runner(otps, ...args);
       } else {
