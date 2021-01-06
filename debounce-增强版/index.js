@@ -22,12 +22,15 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
   if (typeof throttle !== "number") {
     throw TypeError("[debounce-err] : 必须是一个有效的number对象");
   }
+  if (throttle && delay && throttle <= delay) {
+    throw Error("[debounce-err] : throttle 必须大于 delay");
+  }
   if (throttle && throttle < 3 * delay) {
     console.warn("[debounce-warn] : throttle时间最好是delay时间的三倍以上");
   }
   // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
-  let resolveHandler; // 获取promise的控制权
+  //  let resolveHandler; // 获取promise的控制权
   let prevTime = 0; // 上次执行的时间戳
   let timer; // 定时器句柄
   let isCancel; // 是否取消执行
@@ -35,7 +38,7 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
   const handler = (...args) => {
     return new Promise((reslove, reject) => {
       clearTimeout(timer);
-      resolveHandler = reslove; // 保存promise的控制权
+      //  resolveHandler = reslove; // 保存promise的控制权
       const otps = {
         fn,
         reslove,
@@ -59,9 +62,9 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
     timer = null;
     cancelData.message = message;
     isCancel = true;
-    if (resolveHandler) {
-      resolveHandler(cancelData);
-    }
+    // if (resolveHandler) {
+    //   resolveHandler(cancelData);
+    // }
   };
   return handler;
 };
