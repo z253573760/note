@@ -97,9 +97,10 @@ const scrollHandlerAsync = () => {
     .then(() => fn("滚动的"))
     .then((res) => console.log(res));
 };
-document.addEventListener("scroll", fnSync);
-setTimeout(() => fnSync.cancel("取消"), 3000);
-setTimeout(() => document.removeEventListener("scroll", fnSync), 5000);
+const fnAsync = debounce(scrollHandlerAsync, 3000, 8000);
+document.addEventListener("scroll", fnAsync);
+setTimeout(() => fnAsync.cancel("取消"), 3000);
+setTimeout(() => document.removeEventListener("scroll", fnAsync), 1000);
 ```
 
 ### 参数
