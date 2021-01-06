@@ -17,22 +17,6 @@ fn.cancel("取消还没执行的防抖函数");
 debounce(() => {}, 3000, 20000); //如果在 20 秒内没有执行 会默认执行一次
 ```
 
-### 参数
-
-| 参数     | 说明           | 类型                  | 默认值     |
-| -------- | -------------- | --------------------- | ---------- |
-| fn       | 防抖的函数     | _Function \| Promise_ | -          |
-| delay    | 延迟的时间(ms) | Number                | 300        |
-| throttle | 节流的时间(ms) | Number                | 0 (不执行) |
-
-### 返回值
-
-| 参数             | 说明                       | 类型     |
-| ---------------- | -------------------------- | -------- |
-| return           | 默认返回包装过后的防抖函数 | Function |
-| return.cancel    | 取消防抖的函数             | Function |
-| debouce.icCancel | 判断是否是一个取消的结果   | Function |
-
 ## 代码演示
 
 ### 基本用法
@@ -75,3 +59,46 @@ setTimeout(() => {
 }, 2000);
 // 最终打印 我是被手动取消的 { message: '取消防抖了！！！' }
 ```
+
+#### 防抖又节流
+
+```js
+//获取body滚动条高度
+function getScrollTop() {
+  var scrollTop = 0;
+  if (document.documentElement && document.documentElement.scrollTop) {
+    scrollTop = document.documentElement.scrollTop;
+  } else if (document.body) {
+    scrollTop = document.body.scrollTop;
+  }
+  return scrollTop;
+}
+const fn = debounce(
+  () => {
+    const scrollTop = getScrollTop();
+    console.log("scrollTop", scrollTop);
+    return scrollTop;
+  },
+  3000,
+  8000
+);
+document.addEventListener("scroll", fn);
+setTimeout(() => fn.cancel("取消"), 3000);
+setTimeout(() => document.removeEventListener("scroll", fn), 5000);
+```
+
+### 参数
+
+| 参数     | 说明           | 类型                  | 默认值     |
+| -------- | -------------- | --------------------- | ---------- |
+| fn       | 防抖的函数     | _Function \| Promise_ | -          |
+| delay    | 延迟的时间(ms) | Number                | 300        |
+| throttle | 节流的时间(ms) | Number                | 0 (不执行) |
+
+### 返回值
+
+| 参数             | 说明                       | 类型     |
+| ---------------- | -------------------------- | -------- |
+| return           | 默认返回包装过后的防抖函数 | Function |
+| return.cancel    | 取消防抖的函数             | Function |
+| debouce.icCancel | 判断是否是一个取消的结果   | Function |
