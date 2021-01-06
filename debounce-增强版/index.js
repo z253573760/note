@@ -1,6 +1,6 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
 
-module.exports = function debounce(fn, delay = 500, throttle = 600) {
+module.exports = function debounce(fn, delay = 300, throttle = 0) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
   }
@@ -19,9 +19,10 @@ module.exports = function debounce(fn, delay = 500, throttle = 600) {
     return new Promise(async (reslove, reject) => {
       clearTimeout(timer);
       resolveHandler = reslove; // 保存promise的控制权
-      if (isCancel) reslove(cancelData);
+      if (isCancel) reslove(cancelData); //如果被手动取消 还没执行的防抖函数通通取消
       const curTime = new Date().getTime();
       if (throttle && curTime - prevTime > throttle) {
+        //节流
         prevTime = curTime;
         try {
           const res = await fn(...args);
@@ -30,8 +31,10 @@ module.exports = function debounce(fn, delay = 500, throttle = 600) {
           reject(err);
         }
       } else {
+        //防抖
         timer = setTimeout(async () => {
           try {
+            if (isCancel) reslove(cancelData);
             const res = await fn(...args);
             reslove(res);
           } catch (err) {

@@ -72,8 +72,8 @@ setTimeout(() => {
 
 ### 返回值
 
-| 参数             | 说明                       | 类型     | 默认值 |
-| ---------------- | -------------------------- | -------- | ------ |
-| default          | 默认返回包装过后的防抖函数 | Function | -      |
-| default.cancel   | 取消防抖的函数             | Function | -      |
-| debouce.icCancel | 判断是否是一个取消的结果   | Function | -      |
+| 参数             | 说明                       | 类型     |
+| ---------------- | -------------------------- | -------- |
+| default          | 默认返回包装过后的防抖函数 | Function |
+| default.cancel   | 取消防抖的函数             | Function |
+| debouce.icCancel | 判断是否是一个取消的结果   | Function |

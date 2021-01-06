@@ -8,7 +8,9 @@ const fn = debounce(
       setTimeout(() => {
         r(a + count);
       }, 3000)
-    )
+    ),
+  500,
+  8000
 );
 
 const suceessHandler = (res) => {
