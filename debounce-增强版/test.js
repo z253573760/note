@@ -1,4 +1,6 @@
 const debounce = require("./index.js");
+
+//开始简单的测试
 let count = 1;
 const fn = debounce(
   (a) =>

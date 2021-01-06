@@ -1,4 +1,5 @@
 const __v__is__cancel = Symbol("__v__is__cancel");
+
 module.exports = function debounce(fn, delay = 500, throttle = 600) {
   if (typeof fn != "function" && !(fn instanceof Promise)) {
     throw TypeError("[debounce-err] : 必须是一个函数或者Promise");
@@ -9,7 +10,7 @@ module.exports = function debounce(fn, delay = 500, throttle = 600) {
   // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandler; // 获取promise的控制权
-  let prevTime = 0;
+  let prevTime = 0; // 上次执行的时间戳
   let timer; // 定时器句柄
   let isCancel; // 是否取消执行
   const cancelData = Object.create({ [__v__is__cancel]: true });
@@ -23,7 +24,8 @@ module.exports = function debounce(fn, delay = 500, throttle = 600) {
       if (throttle && curTime - prevTime > throttle) {
         prevTime = curTime;
         try {
-          reslove(await fn(...args));
+          const res = await fn(...args);
+          reslove(res);
         } catch (err) {
           reject(err);
         }
@@ -48,4 +50,3 @@ module.exports = function debounce(fn, delay = 500, throttle = 600) {
   };
   return handler;
 };
-//开始简单的测试
