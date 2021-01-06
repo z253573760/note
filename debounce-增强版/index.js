@@ -18,6 +18,9 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
   if (typeof delay !== "number") {
     throw TypeError("[debounce-err] : 必须是一个有效的number对象");
   }
+  if (typeof throttle !== "number") {
+    throw TypeError("[debounce-err] : 必须是一个有效的number对象");
+  }
   // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandler; // 获取promise的控制权
@@ -53,7 +56,17 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
     timer = null;
     cancelData.message = message;
     isCancel = true;
-    resolveHandler(cancelData); //强制结束promise
+    if (resolveHandler) {
+      resolveHandler(cancelData);
+    } else {
+      let t = setInterval(() => {
+        if (resolveHandler) {
+          clearInterval(t);
+          t = null;
+          resolveHandler(cancelData);
+        }
+      });
+    }
   };
   return handler;
 };
