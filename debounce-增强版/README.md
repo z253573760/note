@@ -105,11 +105,11 @@ setTimeout(() => document.removeEventListener("scroll", fnAsync), 1000);
 
 ### 参数
 
-| 参数     | 说明           | 类型                  | 默认值     |
-| -------- | -------------- | --------------------- | ---------- |
-| fn       | 防抖的函数     | _Function \| Promise_ | -          |
-| delay    | 延迟的时间(ms) | Number                | 300        |
-| throttle | 节流的时间(ms) | Number                | 0 (不执行) |
+| 参数     | 说明                                 | 类型                  | 默认值     |
+| -------- | ------------------------------------ | --------------------- | ---------- |
+| fn       | 防抖的函数                           | _Function \| Promise_ | -          |
+| delay    | 延迟的时间(ms)                       | Number                | 300        |
+| throttle | 节流的时间(ms) 最好是延迟时间的 3 倍 | Number                | 0 (不执行) |
 
 ### 返回值
 

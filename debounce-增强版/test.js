@@ -10,7 +10,7 @@ const fn = debounce(
       }, 3000)
     ),
   2000,
-  3000
+  5000
 );
 
 const suceessHandler = (res) => {
@@ -21,15 +21,15 @@ const suceessHandler = (res) => {
   }
 };
 const errorHadnler = (err) => console.log("err", err);
-// fn("a").then(suceessHandler, errorHadnler);
-// fn("b").then(suceessHandler, errorHadnler);
-// fn("c").then(suceessHandler, errorHadnler);
-// fn("d").then(suceessHandler, errorHadnler);
+fn("a").then(suceessHandler, errorHadnler);
+fn("b").then(suceessHandler, errorHadnler);
+fn("c").then(suceessHandler, errorHadnler);
+fn("d").then(suceessHandler, errorHadnler);
 
 setInterval(() => {
   count += 1;
   fn(count).then(suceessHandler, errorHadnler);
-}, 1000);
+}, 100);
 setTimeout(() => {
   fn.cancel("取消防抖了！！！");
 }, 10000);

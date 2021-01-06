@@ -22,6 +22,9 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
   if (typeof throttle !== "number") {
     throw TypeError("[debounce-err] : 必须是一个有效的number对象");
   }
+  if (throttle && throttle < 3 * delay) {
+    console.warn("[debounce-warn] : throttle时间最好是delay时间的三倍以上");
+  }
   // 判断是否是一个取消的结果
   debounce.isCancel = (target) => !!target[__v__is__cancel];
   let resolveHandler; // 获取promise的控制权
