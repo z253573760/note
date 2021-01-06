@@ -73,18 +73,33 @@ function getScrollTop() {
   }
   return scrollTop;
 }
-const fn = debounce(
-  () => {
-    const scrollTop = getScrollTop();
-    console.log("scrollTop", scrollTop);
-    return scrollTop;
-  },
-  3000,
-  8000
-);
-document.addEventListener("scroll", fn);
-setTimeout(() => fn.cancel("取消"), 3000);
-setTimeout(() => document.removeEventListener("scroll", fn), 5000);
+```
+
+###### 同步情况
+
+```js
+const scrollHandlerSync = () => {
+  const scrollTop = getScrollTop();
+  console.log("scrollTop", scrollTop);
+  return scrollTop;
+};
+const fnSync = debounce(scrollHandlerSync, 3000, 8000);
+document.addEventListener("scroll", fnSync);
+setTimeout(() => fnSync.cancel("取消"), 3000);
+setTimeout(() => document.removeEventListener("scroll", fnSync), 5000);
+```
+
+###### 异步情况
+
+```js
+const scrollHandlerAsync = () => {
+  new Promise((r) => setTimeout(r, 3000))
+    .then(() => fn("滚动的"))
+    .then((res) => console.log(res));
+};
+document.addEventListener("scroll", fnSync);
+setTimeout(() => fnSync.cancel("取消"), 3000);
+setTimeout(() => document.removeEventListener("scroll", fnSync), 5000);
 ```
 
 ### 参数
