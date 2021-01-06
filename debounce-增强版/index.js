@@ -59,6 +59,11 @@ module.exports = function debounce(fn, delay = 300, throttle = 0) {
     if (resolveHandler) {
       resolveHandler(cancelData);
     } else {
+      // 可能 handler 是一个在一个异步任务中 所以这边暂时开个定时器去等 handler的执行
+      // handler 一执行 就可以马上拿到 resloveHandler  拿到promise的控制权
+      // 但是会有一个问题
+      // 用户 只执行 const fn = debounce(()=>{})  不执行fn()
+      // 然后马上 fn.cancel()  这个时候 下面这个队列就没有时机关闭了 会一直在任务队列中
       let t = setInterval(() => {
         if (resolveHandler) {
           clearInterval(t);
