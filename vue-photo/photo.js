@@ -1,48 +1,10 @@
 import "./index.scss";
-import { ref, reactive, computed, watch } from "vue";
-import { useDrag } from "./use";
-function createBem(nameSpace) {
-  return (name) => {
-    return `${nameSpace}-${name}`;
-  };
-}
+import { ref, watch } from "vue";
+import { useDrag, useStyle } from "./use";
+import { createBem } from "./bem";
 
 const name = "cc-photo";
 const bem = createBem(name);
-
-const useStyle = () => {
-  const style = reactive({
-    scale: 1,
-    rotate: 0,
-  });
-  const scaleAdd = () => {
-    if (style.scale > 2) return;
-    style.scale += 0.1;
-  };
-  const scaleDel = () => {
-    if (style.scale < 0.1) return;
-    style.scale -= 0.1;
-  };
-  const rotateAdd = () => (style.rotate -= 90);
-  const rotateDel = () => (style.rotate += 90);
-  const initStyles = () => {
-    style.scale = 1;
-    style.rotate = 0;
-  };
-  const styles = computed(() => {
-    return {
-      transform: `scale(${style.scale}) rotate(${style.rotate}deg)`,
-    };
-  });
-  return {
-    styles,
-    scaleAdd,
-    scaleDel,
-    rotateAdd,
-    rotateDel,
-    initStyles,
-  };
-};
 
 export default {
   name,
@@ -65,13 +27,6 @@ export default {
       imgIndex.value = index;
       show.value = true;
     };
-    watch(
-      () => [show.value, imgIndex.value],
-      () => {
-        initDragStyle();
-        initStyles();
-      }
-    );
     const next = () => {
       if (imgIndex.value == imgList.value.length - 1) {
         return;
@@ -82,10 +37,16 @@ export default {
       if (imgIndex.value == 0) return;
       imgIndex.value -= 1;
     };
-
     const dom = (e) => {
       imgRef.value = e;
     };
+    watch(
+      () => [show.value, imgIndex.value],
+      () => {
+        initDragStyle();
+        initStyles();
+      }
+    );
     return {
       show,
       styles,

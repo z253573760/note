@@ -1,4 +1,4 @@
-import { ref, onMounted, watch, onUnmounted } from "vue";
+import { ref, reactive, onMounted, watch, onUnmounted } from "vue";
 
 export function useDrag(element) {
   const isDrag = ref(false);
@@ -59,5 +59,38 @@ export function useDrag(element) {
   return {
     isDrag,
     initDragStyle,
+  };
+}
+export function useStyle() {
+  const style = reactive({
+    scale: 1,
+    rotate: 0,
+  });
+  const scaleAdd = () => {
+    if (style.scale > 2) return;
+    style.scale += 0.1;
+  };
+  const scaleDel = () => {
+    if (style.scale < 0.1) return;
+    style.scale -= 0.1;
+  };
+  const rotateAdd = () => (style.rotate -= 90);
+  const rotateDel = () => (style.rotate += 90);
+  const initStyles = () => {
+    style.scale = 1;
+    style.rotate = 0;
+  };
+  const styles = computed(() => {
+    return {
+      transform: `scale(${style.scale}) rotate(${style.rotate}deg)`,
+    };
+  });
+  return {
+    styles,
+    scaleAdd,
+    scaleDel,
+    rotateAdd,
+    rotateDel,
+    initStyles,
   };
 }

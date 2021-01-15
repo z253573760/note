@@ -18,7 +18,6 @@ export const showPhoto = (...args) => {
   if (!instance) {
     instance = getInstance();
   }
-
   instance.showPhoto(...args);
 };
 
@@ -33,7 +32,7 @@ function photo(params) {
   }
 }
 
-photo.install = function(app) {
+photo.install = function (app) {
   instance = getInstance();
   app.config.globalProperties.$photo = instance;
   app.provide(key, instance);
