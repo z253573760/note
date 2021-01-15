@@ -12,7 +12,7 @@ vue3 照片墙
 
 (自己下载引入项目文件)
 
-#### 1 插件注册
+#### 1 插件注册 挂在全局 vue 实例
 
 ```js
 // main.js
@@ -31,6 +31,58 @@ export default {
       this.$photo.showPhoto("://xxx.jpg"); //单张
       this.$photo.showPhoto(["://xxx.jpg", "://xxx2.jpg"], 1); // 多张
     },
+  },
+};
+```
+
+#### 2 模仿 useRoute
+
+```js
+// main.js
+import { createApp } from "vue";
+import { usePhoto } from "vue-photo";
+import App from "./App.vue";
+const app = createApp({
+  ...App,
+}).mounted("#app");
+//子组件
+export default {
+  setup() {
+    const photo = usePhoto();
+    const prevShowPhoto = () => {
+      photo.showPhoto("://xxx.jpg"); //单张
+      photo.showPhoto(["://xxx.jpg", "://xxx2.jpg"], 1); // 多张
+    };
+    return {
+      prevShowPhoto,
+    };
+  },
+};
+```
+
+#### 2 直接调用
+
+```js
+// main.js
+import { createApp } from "vue";
+import Photo, { showPhoto } from "vue-photo";
+import App from "./App.vue";
+const app = createApp({
+  ...App,
+}).mounted("#app");
+//子组件
+export default {
+  setup() {
+    const prevShowPhoto = () => {
+      showPhoto("://xxx.jpg"); //单张
+    };
+    const prevShowPhoto2 = () => {
+      Photo(["://xxx.jpg", "://xxx2.jpg"], 1); // 多张
+    };
+    return {
+      prevShowPhoto,
+      prevShowPhoto2,
+    };
   },
 };
 ```
