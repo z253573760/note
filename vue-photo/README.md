@@ -60,7 +60,7 @@ export default {
 };
 ```
 
-#### 2 直接调用
+#### 3 直接调用
 
 ```js
 // main.js
@@ -83,6 +83,29 @@ export default {
       prevShowPhoto,
       prevShowPhoto2,
     };
+  },
+};
+```
+
+#### 拖拽 hooks
+
+```js
+import { ref } from "vue";
+import { useDrag } from "vue-photo";
+export default {
+  setup() {
+    const imgRef = ref(null);
+    const dom = (e) => {
+      imgRef.value = e;
+    };
+    const {
+      initDragStyle, //重置拖拽样式的方法
+      isDrag, // 是否拖拽
+    } = useDrag(imgRef);
+    return { dom };
+  },
+  render() {
+    return <div ref={this.dom}>拖拽我</div>;
   },
 };
 ```
