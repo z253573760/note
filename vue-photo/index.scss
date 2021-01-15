@@ -1,0 +1,116 @@
+.cc-photo{
+  &-wrap {
+    user-select: none;
+    transition: 0.3s;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(56, 56, 56, 0.8);
+  }
+  &-container{
+    position: relative;
+   // overflow: scroll;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //background: pink;;
+  }
+ 
+  
+}
+.cc-photo-close-wrap{
+  position: fixed;
+  right:0;
+  top:0;
+  width:50px;
+  height:50px;
+  background: rgba(131, 130, 130,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:#fff;
+  border-radius: 0% 0% 0 20%;
+  cursor: pointer;
+  transition: 0.3s;
+  &:hover{
+    .cc-photo-close::before,
+    .cc-photo-close::after{
+      background-color: rgb(243, 121, 7);
+    }
+  }
+  .cc-photo-close {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    &::before{
+      position: absolute;
+      content: ' ';
+      background-color: #fff;
+      left:18px;
+      transform:rotate(45deg);
+      width: 8px;
+      height: 40px; 
+    }
+    &::after{
+      position: absolute;
+      content: ' ';
+      background-color: #fff;
+      left:18px;
+      transform: rotate(135deg);
+      width: 8px;
+      height: 40px; 
+    }
+  }
+}
+
+
+.cc-photo-content{
+  position: absolute;
+  width:70%;
+  height:70%;
+ // overflow: scroll;
+  top:45%;
+  left:50%;
+  transform:translateX(-50%) translateY(-50%);
+  //background: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  div{
+    width:100%;
+    height:100%; 
+     display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  img{
+   max-height:100%;
+    // height:100%;
+    transition: 0.3s;;
+  }
+}
+.cc-photo-action{
+  position: absolute;
+  width:50%;
+  height:50px;
+  bottom:6%;
+  left:50%;
+  border-radius: 10px;
+  transform:translateX(-50%) translateY(-50%);
+  background: rgba(131, 130, 130,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color:#fff;
+  &>div{    
+    cursor: pointer;
+  }
+}
