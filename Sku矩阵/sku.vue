@@ -92,7 +92,7 @@ function cacheDisabled() {
     const strKey = JSON.stringify(result);
     if (Object.prototype.hasOwnProperty.call(cache, strKey))
       return !cache[strKey];
-    const flag = skuList.find((item) => {
+    const skuTarget = skuList.find((item) => {
       const specs = item.specs;
       let count = 0;
       Object.values(result).forEach((sku) => {
@@ -104,7 +104,7 @@ function cacheDisabled() {
       });
       return count === specs.length;
     });
-    cache[strKey] = flag;
+    cache[strKey] = skuTarget;
     return !flag;
   }
   getDisabled.getSku = function (result) {
