@@ -1,4 +1,12 @@
-import { ref, reactive, onMounted, watch, onUnmounted } from "vue";
+import {
+  ref,
+  onMounted,
+  watch,
+  reactive,
+  computed,
+  onUnmounted,
+  getCurrentInstance,
+} from "vue";
 
 export function useDrag(element) {
   const isDrag = ref(false);
@@ -25,7 +33,6 @@ export function useDrag(element) {
   };
   const mousedown = (e) => {
     e.preventDefault();
-    console.log("element.value.style", element.value.style);
     if (!style) {
       style = element.value.style || "";
     }
@@ -61,6 +68,14 @@ export function useDrag(element) {
     initDragStyle,
   };
 }
+
+export function useExponse(api) {
+  const instance = getCurrentInstance();
+  if (instance) {
+    Object.assign(instance.proxy, api);
+  }
+}
+
 export function useStyle() {
   const style = reactive({
     scale: 1,

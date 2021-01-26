@@ -1,12 +1,50 @@
 import "./index.scss";
-import { ref, watch } from "vue";
-import { useDrag, useStyle } from "./use";
-import { createBem } from "./bem";
+import { ref, reactive, watch, computed, defineComponent } from "vue";
+import { useDrag, useExponse } from "./use";
+function createBem(nameSpace) {
+  return (name) => {
+    return `${nameSpace}-${name}`;
+  };
+}
 
 const name = "cc-photo";
 const bem = createBem(name);
 
-export default {
+const useStyle = () => {
+  const style = reactive({
+    scale: 1,
+    rotate: 0,
+  });
+  const scaleAdd = () => {
+    if (style.scale > 2) return;
+    style.scale += 0.1;
+  };
+  const scaleDel = () => {
+    if (style.scale < 0.1) return;
+    style.scale -= 0.1;
+  };
+  const rotateAdd = () => (style.rotate -= 90);
+  const rotateDel = () => (style.rotate += 90);
+  const initStyles = () => {
+    style.scale = 1;
+    style.rotate = 0;
+  };
+  const styles = computed(() => {
+    return {
+      transform: `scale(${style.scale}) rotate(${style.rotate}deg)`,
+    };
+  });
+  return {
+    styles,
+    scaleAdd,
+    scaleDel,
+    rotateAdd,
+    rotateDel,
+    initStyles,
+  };
+};
+
+export default defineComponent({
   name,
   setup() {
     const show = ref(false);
@@ -27,6 +65,14 @@ export default {
       imgIndex.value = index;
       show.value = true;
     };
+    useExponse({ showPhoto });
+    watch(
+      () => [show.value, imgIndex.value],
+      () => {
+        initDragStyle();
+        initStyles();
+      }
+    );
     const next = () => {
       if (imgIndex.value == imgList.value.length - 1) {
         return;
@@ -37,37 +83,13 @@ export default {
       if (imgIndex.value == 0) return;
       imgIndex.value -= 1;
     };
+
     const dom = (e) => {
       imgRef.value = e;
     };
-    watch(
-      () => [show.value, imgIndex.value],
-      () => {
-        initDragStyle();
-        initStyles();
-      }
-    );
-    return {
-      show,
-      styles,
-      scaleAdd,
-      scaleDel,
-      rotateAdd,
-      rotateDel,
-      imgList,
-      imgIndex,
-      showPhoto,
-      next,
-      prev,
-      dom,
-      initDragStyle,
-      initStyles,
-    };
-  },
-  render() {
     const actions = (
       <div className={bem("action")}>
-        <div onClick={this.prev}>
+        <div onClick={prev}>
           <svg
             t="1610614345587"
             class="icon"
@@ -85,7 +107,7 @@ export default {
             ></path>
           </svg>
         </div>
-        <div onClick={this.scaleAdd}>
+        <div onClick={scaleAdd}>
           <svg
             t="1610593926489"
             class="icon"
@@ -109,7 +131,7 @@ export default {
           </svg>
         </div>
 
-        <div onClick={this.scaleDel}>
+        <div onClick={scaleDel}>
           <svg
             t="1610593988714"
             class="icon"
@@ -134,8 +156,8 @@ export default {
         </div>
         <div
           onClick={() => {
-            this.initDragStyle();
-            this.initStyles();
+            initDragStyle();
+            initStyles();
           }}
         >
           <svg
@@ -160,7 +182,7 @@ export default {
             ></path>
           </svg>
         </div>
-        <div onClick={this.rotateAdd}>
+        <div onClick={rotateAdd}>
           <svg
             t="1610594126415"
             class="icon"
@@ -183,7 +205,7 @@ export default {
             ></path>
           </svg>
         </div>
-        <div onClick={this.rotateDel}>
+        <div onClick={rotateDel}>
           <svg
             t="1610594171626"
             class="icon"
@@ -207,7 +229,7 @@ export default {
             ></path>
           </svg>
         </div>
-        <div onClick={this.next}>
+        <div onClick={next}>
           <svg
             t="1610614427021"
             class="icon"
@@ -227,27 +249,27 @@ export default {
         </div>
       </div>
     );
-    return (
+    return () => (
       <div>
         <div
           className={bem(`wrap`)}
           style={{
-            opacity: this.show ? 1 : 0,
-            transform: this.show ? "scale(1)" : "scale(0)",
+            opacity: show.value ? 1 : 0,
+            transform: show.value ? "scale(1)" : "scale(0)",
           }}
         >
           <div className={bem(`container`)}>
             <div
               className={bem("close-wrap")}
-              onClick={() => (this.show = false)}
+              onClick={() => (show.value = false)}
             >
               <div className={bem("close")}></div>
             </div>
-            <div className={bem("content")} ref={this.dom}>
+            <div className={bem("content")} ref={dom}>
               <img
-                src={this.imgList[this.imgIndex]}
+                src={imgList.value[imgIndex.value]}
                 alt=""
-                style={this.styles}
+                style={styles.value}
               />
             </div>
           </div>
@@ -256,4 +278,4 @@ export default {
       </div>
     );
   },
-};
+});
