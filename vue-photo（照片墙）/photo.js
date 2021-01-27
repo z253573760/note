@@ -30,7 +30,9 @@ export default defineComponent({
       rotateDel,
       initStyles,
     } = useStyle();
+    // 当前展示照片墙图片的数组
     const imgList = ref([]);
+    //  当前展示照片墙图片的索引
     const imgIndex = ref(0);
     const showPhoto = (list = [], index = 0) => {
       imgList.value = list;
