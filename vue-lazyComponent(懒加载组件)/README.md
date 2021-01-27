@@ -4,18 +4,22 @@ vue3 懒加载组件
 
 ### 功能说明
 
-当组件出现在视口区域时 渲染默认插槽
+当组件出现在视口区域时 渲染默认插槽 不支持 SSR
 
 ### 注意事项
 
 使用环境必须支持 IntersectionObserverAPI 若不支持自行引入 polyfill
-https://github.com/w3c/IntersectionObserver/tree/master/polyfill'
+https://github.com/w3c/IntersectionObserver/tree/master/polyfill
 
 ## 代码演示
 
+### 场景
+
+一些组件初始化要占用很多资源 或者 时间较常
+
 ### 基本用法
 
-(自己下载引入项目文件)
+(自己下载引入项目文件) 代码写了注释自己看
 
 ```js
 <LazyComponent style="min-height:200px">

@@ -17,7 +17,7 @@ export function useIntersectionObserver(domRef, cb) {
           cb();
           observer.unobserve(change.target);
         }
-      });
+      }, config);
     });
     observer.observe(domRef.value);
   });
