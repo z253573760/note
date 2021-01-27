@@ -44,21 +44,13 @@ export default {
   components: { LazyComponent },
   setup() {
     const beforeLoaded = (IntersectionObserverEntry) => {
-      //IntersectionObserverEntry
-      //{
-      //   boundingClientRect: DOMRectReadOnly {x: 8, y: 380, width: 300, height: 300, top: 380, …}
-      //   intersectionRatio: 0.023333333432674408
-      //   intersectionRect: DOMRectReadOnly {x: 8, y: 380, width: 300, height: 7, top: 380, …}
-      //   isIntersecting: true
-      //   rootBounds: DOMRectReadOnly {x: 0, y: 0, width: 1903, height: 387, top: 0, …}
-      //   target: img.lazy
-      //   time: 440149.8099999735
-      // }
       console.log("beforeLoaded");
     };
     const afterLoaded = (IntersectionObserverEntry) => {
       console.log("afterLoaded");
     };
+
+    // beforeLoaded=> YourComponentd:onMounetd => afterLoaded
     return {
       beforeLoaded,
       afterLoaded,
