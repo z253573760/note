@@ -19,6 +19,7 @@ https://github.com/w3c/IntersectionObserver/tree/master/polyfill'
 
 ```js
 <LazyComponent style="min-height:200px">
+  // 如果不传loading占位符的话 请给LazyComponent的样式加一个高度占位
   <template v-slot:default>
     <div>
       <YourComponent remark="需要被懒加载的组件" />
