@@ -14,7 +14,7 @@ export function useIntersectionObserver(domRef, cb) {
     observer = new IntersectionObserver(function (changes) {
       changes.forEach((change) => {
         if (change.isIntersecting) {
-          cb();
+          cb(change);
           observer.unobserve(change.target);
         }
       }, config);

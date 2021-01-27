@@ -19,10 +19,10 @@ export default {
     useIntersectionObserver(
       domRef,
       //这个回调会在 IntersectionObserver isIntersecting=== ture下执行  只执行一次 once
-      () => {
-        emit("beforeLoaded"); // 其实没必要的 可以再slot-default 的 钩子里定义
+      (IntersectionObserverEntry) => {
+        emit("beforeLoaded", IntersectionObserverEntry); // 其实没必要的 可以再slot-default 的 钩子里定义
         state.value = "loaded";
-        nextTick(() => emit("afterLoaded")); // 其实没必要的 可以再slot-default 的 钩子里定义
+        nextTick(() => emit("afterLoaded", IntersectionObserverEntry)); // 其实没必要的 可以再slot-default 的 钩子里定义
       },
       props.config
     );
