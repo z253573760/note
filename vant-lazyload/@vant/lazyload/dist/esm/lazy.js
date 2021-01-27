@@ -18,9 +18,10 @@ import {
   ImageCache,
 } from "./util";
 import ReactiveListener from "./listener";
-var DEFAULT_URL =
+var DEFAULT_URL = //默认 loading erroe 状态下的图片
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 var DEFAULT_EVENTS = [
+  // 默认 => 监听的事件
   "scroll",
   "wheel",
   "mousewheel",
@@ -36,13 +37,13 @@ var DEFAULT_OBSERVER_OPTIONS = {
 export default function () {
   return /*#__PURE__*/ (function () {
     function Lazy(_ref) {
-      var preLoad = _ref.preLoad,
-        error = _ref.error,
-        throttleWait = _ref.throttleWait,
+      var preLoad = _ref.preLoad, //预加载高度比例
+        error = _ref.error, //error状态 的图片
+        throttleWait = _ref.throttleWait, // 监听事件的节流时间参数
         preLoadTop = _ref.preLoadTop,
         dispatchEvent = _ref.dispatchEvent,
-        loading = _ref.loading,
-        attempt = _ref.attempt,
+        loading = _ref.loading, // loading状态 图片
+        attempt = _ref.attempt, // 尝试加载次数 失败后会重新 new Image 去加载图片 达到次数后 会日志打印
         _ref$silent = _ref.silent,
         silent = _ref$silent === void 0 ? true : _ref$silent,
         scale = _ref.scale,
@@ -53,6 +54,8 @@ export default function () {
         observerOptions = _ref.observerOptions;
       this.version = "__VUE_LAZYLOAD_VERSION__";
       this.mode = modeType.event;
+      // event (事件监听),
+      // observer (使用IntersectionObserver api 来判定目标元素是否进入了可视区域 //http://www.ruanyifeng.com/blog/2016/11/intersectionobserver_api.html )]
       this.ListenerQueue = [];
       this.TargetIndex = 0;
       this.TargetQueue = [];

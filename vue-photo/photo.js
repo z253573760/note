@@ -1,6 +1,6 @@
 import "./index.scss";
-import { ref, reactive, watch, computed, defineComponent } from "vue";
-import { useDrag, useExponse } from "./use";
+import { ref, watch, defineComponent } from "vue";
+import { useDrag, useExponse, useStyle } from "./use";
 function createBem(nameSpace) {
   return (name) => {
     return `${nameSpace}-${name}`;
@@ -10,45 +10,14 @@ function createBem(nameSpace) {
 const name = "cc-photo";
 const bem = createBem(name);
 
-const useStyle = () => {
-  const style = reactive({
-    scale: 1,
-    rotate: 0,
-  });
-  const scaleAdd = () => {
-    if (style.scale > 2) return;
-    style.scale += 0.1;
-  };
-  const scaleDel = () => {
-    if (style.scale < 0.1) return;
-    style.scale -= 0.1;
-  };
-  const rotateAdd = () => (style.rotate -= 90);
-  const rotateDel = () => (style.rotate += 90);
-  const initStyles = () => {
-    style.scale = 1;
-    style.rotate = 0;
-  };
-  const styles = computed(() => {
-    return {
-      transform: `scale(${style.scale}) rotate(${style.rotate}deg)`,
-    };
-  });
-  return {
-    styles,
-    scaleAdd,
-    scaleDel,
-    rotateAdd,
-    rotateDel,
-    initStyles,
-  };
-};
-
 export default defineComponent({
   name,
   setup() {
     const show = ref(false);
     const imgRef = ref(null);
+    const dom = (e) => {
+      imgRef.value = e;
+    };
     const { initDragStyle } = useDrag(imgRef);
     const {
       styles,
@@ -84,10 +53,7 @@ export default defineComponent({
       imgIndex.value -= 1;
     };
 
-    const dom = (e) => {
-      imgRef.value = e;
-    };
-    const actions = (
+    const actions = () => (
       <div className={bem("action")}>
         <div onClick={prev}>
           <svg
@@ -267,8 +233,7 @@ export default defineComponent({
             </div>
             <div className={bem("content")} ref={dom}>
               <img
-                src={imgList.value[imgIndex.value]}
-                alt=""
+                v-lazy={imgList.value[imgIndex.value]}
                 style={styles.value}
               />
             </div>
