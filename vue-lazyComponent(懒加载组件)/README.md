@@ -25,6 +25,7 @@ https://github.com/w3c/IntersectionObserver/tree/master/polyfill
 <template>
   <LazyComponent
     style="min-height:200px"
+    :config="config"
     @beforeLoaded="beforeLoaded"
     @afterLoaded="afterLoaded"
   >
@@ -49,11 +50,17 @@ export default {
     const afterLoaded = (IntersectionObserverEntry) => {
       console.log("afterLoaded");
     };
-
     // beforeLoaded=> YourComponentd:onMounetd => afterLoaded
+
     return {
       beforeLoaded,
       afterLoaded,
+      config: {
+        //可以不传
+        root: null,
+        rootMargin: "0px", // viewport的缓冲距离
+        threshold: [0],
+      },
     };
   },
 };
