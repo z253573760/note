@@ -50,13 +50,12 @@ export default {
     const afterLoaded = (IntersectionObserverEntry) => {
       console.log("afterLoaded");
     };
-    // beforeLoaded=> YourComponentd:onMounetd => afterLoaded
-
+    //调用顺序 beforeLoaded=> YourComponent:onMounetd => afterLoaded
     return {
       beforeLoaded,
       afterLoaded,
       config: {
-        //可以不传
+        //非必传
         root: null,
         rootMargin: "0px", // viewport的缓冲距离
         threshold: [0],
