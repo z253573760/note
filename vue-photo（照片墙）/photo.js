@@ -13,12 +13,15 @@ const bem = createBem(name);
 export default defineComponent({
   name,
   setup() {
+    // 控制照片墙的显示隐藏
     const show = ref(false);
     const imgRef = ref(null);
     const dom = (e) => {
       imgRef.value = e;
     };
+    // 拖拽
     const { initDragStyle } = useDrag(imgRef);
+    // 控制  [前进 后退 翻转 放大 缩小 还原]
     const {
       styles,
       scaleAdd,
@@ -34,8 +37,10 @@ export default defineComponent({
       imgIndex.value = index;
       show.value = true;
     };
+    // 把showPhoto方法暴露的实例上
     useExponse({ showPhoto });
     watch(
+      // 监听 照片墙的显示隐藏 还有照片墙当前展示照片的索引 把样式初始化
       () => [show.value, imgIndex.value],
       () => {
         initDragStyle();
@@ -52,8 +57,8 @@ export default defineComponent({
       if (imgIndex.value == 0) return;
       imgIndex.value -= 1;
     };
-
-    const actions = () => (
+    // 照片墙的操作面板 [前进 后退 翻转 放大 缩小 还原]
+    const actions = (
       <div className={bem("action")}>
         <div onClick={prev}>
           <svg
