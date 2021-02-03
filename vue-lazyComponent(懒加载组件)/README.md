@@ -13,6 +13,8 @@ https://github.com/w3c/IntersectionObserver/tree/master/polyfill
 
 ## 代码演示
 
+[codesandbox](https://codesandbox.io/s/lazy-load-culi9?file=/src/App.vue:433-447)
+
 ### 场景
 
 一些组件初始化要占用很多资源 或者 时间较常

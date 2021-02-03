@@ -4,7 +4,7 @@ function assert(condition, msg) {
     throw new Error(`${msg}`);
   }
 }
-export function useIntersectionObserver(domRef, cb) {
+export function useIntersectionObserver(domRef, cb, config) {
   assert(
     typeof IntersectionObserver !== "undefined",
     `[useIntersectionObserver] IntersectionObserver undefined . Please install this polyfill: https://github.com/w3c/IntersectionObserver/tree/master/polyfill')`
