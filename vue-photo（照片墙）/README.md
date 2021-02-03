@@ -8,7 +8,7 @@ vue3 照片墙
 
 ## 代码演示
 
-[codesandbox](hhttps://codesandbox.io/s/optimistic-chebyshev-nqry9?file=/src/App.vue)
+[codesandbox](https://codesandbox.io/s/optimistic-chebyshev-nqry9?file=/src/App.vue)
 
 ### 基本用法
 
