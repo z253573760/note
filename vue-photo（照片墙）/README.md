@@ -8,6 +8,8 @@ vue3 照片墙
 
 ## 代码演示
 
+[codesandbox](hhttps://codesandbox.io/s/optimistic-chebyshev-nqry9?file=/src/App.vue)
+
 ### 基本用法
 
 (自己下载引入项目文件)
