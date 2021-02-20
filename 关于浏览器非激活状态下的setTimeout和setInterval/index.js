@@ -1,6 +1,6 @@
 import { compose, cache, createWorker, hasKey } from "./utils";
 import { hackTimerWorker } from "./worker";
-import * as TYPE from "./TYPE";
+
 function createInstance() {
   const worker = createWorker(hackTimerWorker);
   const fakeIdToCallback = {};
@@ -24,7 +24,7 @@ function createInstance() {
       parameters: Array.prototype.slice.call(arguments, 2),
     };
     worker.postMessage({
-      name: TYPE.SET_INTERVAL,
+      name: setInterval.name,
       fakeId: fakeId,
       time: time,
     });
@@ -34,7 +34,7 @@ function createInstance() {
     if (hasKey(fakeIdToCallback, fakeId)) {
       delete fakeIdToCallback[fakeId];
       worker.postMessage({
-        name: TYPE.CLEAN_INTERVAL,
+        name: clearInterval.name,
         fakeId: fakeId,
       });
     }
@@ -47,7 +47,7 @@ function createInstance() {
       isTimeout: true,
     };
     worker.postMessage({
-      name: TYPE.SET_TIMEOUT,
+      name: setTimeout.name,
       fakeId: fakeId,
       time: time,
     });
@@ -57,7 +57,7 @@ function createInstance() {
     if (hasKey(fakeIdToCallback, fakeId)) {
       delete fakeIdToCallback[fakeId];
       worker.postMessage({
-        name: TYPE.CLEAN_TIMEOUT,
+        name: clearTimeout.name,
         fakeId: fakeId,
       });
     }
