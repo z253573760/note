@@ -82,10 +82,10 @@ function createInstance() {
   return worker;
 }
 const getInstace = compose(createInstance, cache);
-export default function () {
+export default (function () {
   if (typeof Worker === "undefined") {
     throw Error(`HTML5 Web Worker is not supported`);
   }
   const instance = getInstace();
   return instance;
-}
+})();
