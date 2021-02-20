@@ -1,164 +1,91 @@
-function createWorker(fn) {
-  const blob = new Blob(["(" + fn.toString() + ")()"]);
-  const url = window.URL.createObjectURL(blob);
-  const worker = new Worker(url);
-  return worker;
-}
-
-function hackTimerWorker() {
-  var fakeIdToId = {};
-  onmessage = function (event) {
-    const data = event.data;
-    const name = data.name;
-    const fakeId = data.fakeId;
-    let time;
-    if (Object.prototype.hasOwnProperty.call(data, "time")) {
-      time = data.time;
-    }
-    switch (name) {
-      case "setInterval":
-        fakeIdToId[fakeId] = setInterval(function () {
-          postMessage({ fakeId: fakeId });
-        }, time);
-        break;
-      case "clearInterval":
-        if (Object.prototype.hasOwnProperty.call(fakeIdToId, fakeId)) {
-          clearInterval(fakeIdToId[fakeId]);
-          delete fakeIdToId[fakeId];
-        }
-        break;
-      case "setTimeout":
-        fakeIdToId[fakeId] = setTimeout(function () {
-          postMessage({ fakeId: fakeId });
-          if (Object.prototype.hasOwnProperty.call(fakeIdToId, fakeId)) {
-            delete fakeIdToId[fakeId];
-          }
-        }, time);
-        break;
-      case "clearTimeout":
-        if (Object.prototype.hasOwnProperty.call(fakeIdToId, fakeId)) {
-          clearTimeout(fakeIdToId[fakeId]);
-          delete fakeIdToId[fakeId];
-        }
-        break;
-    }
-  };
-}
-
-var worker,
-  fakeIdToCallback = {},
-  lastFakeId = 0,
-  maxFakeId = 0x7fffffff, // 2 ^ 31 - 1, 31 bit, positive values of signed 32 bit integer
-  logPrefix = "HackTimer.js by turuslan: ";
-
-if (typeof Worker !== "undefined") {
-  logPrefix;
-  var getFakeId = function getFakeId() {
+import { compose, cache, createWorker, hasKey } from "./utils";
+import { hackTimerWorker } from "./worker";
+import * as TYPE from "./TYPE";
+function createInstance() {
+  const worker = createWorker(hackTimerWorker);
+  const fakeIdToCallback = {};
+  let lastFakeId = 0;
+  const maxFakeId = 0x7fffffff;
+  function getFakeId() {
     do {
       if (lastFakeId == maxFakeId) {
         lastFakeId = 0;
       } else {
-        lastFakeId++;
+        lastFakeId += 1;
       }
-    } while (
-      Object.prototype.hasOwnProperty.call(fakeIdToCallback, lastFakeId)
-      // fakeIdToCallback.hasOwnProperty(lastFakeId)
-    );
+    } while (hasKey(fakeIdToCallback, lastFakeId));
     return lastFakeId;
+  }
+
+  worker.setInterval = (callback, time /* , parameters */) => {
+    var fakeId = getFakeId();
+    fakeIdToCallback[fakeId] = {
+      callback: callback,
+      parameters: Array.prototype.slice.call(arguments, 2),
+    };
+    worker.postMessage({
+      name: TYPE.SET_INTERVAL,
+      fakeId: fakeId,
+      time: time,
+    });
+    return fakeId;
   };
-  try {
-    worker = createWorker(hackTimerWorker);
-    window.setInterval = function (callback, time /* , parameters */) {
-      var fakeId = getFakeId();
-      fakeIdToCallback[fakeId] = {
-        callback: callback,
-        parameters: Array.prototype.slice.call(arguments, 2),
-      };
+  worker.clearInterval = function (fakeId) {
+    if (hasKey(fakeIdToCallback, fakeId)) {
+      delete fakeIdToCallback[fakeId];
       worker.postMessage({
-        name: "setInterval",
+        name: TYPE.CLEAN_INTERVAL,
         fakeId: fakeId,
-        time: time,
       });
-      return fakeId;
+    }
+  };
+  worker.setTimeout = function (callback, time /* , parameters */) {
+    var fakeId = getFakeId();
+    fakeIdToCallback[fakeId] = {
+      callback: callback,
+      parameters: Array.prototype.slice.call(arguments, 2),
+      isTimeout: true,
     };
-    window.clearInterval = function (fakeId) {
-      if (
-        Object.prototype.hasOwnProperty.call(fakeIdToCallback, fakeId)
-        // fakeIdToCallback.hasOwnProperty(fakeId)
-      ) {
-        delete fakeIdToCallback[fakeId];
-        worker.postMessage({
-          name: "clearInterval",
-          fakeId: fakeId,
-        });
-      }
-    };
-    window.setTimeout = function (callback, time /* , parameters */) {
-      var fakeId = getFakeId();
-      fakeIdToCallback[fakeId] = {
-        callback: callback,
-        parameters: Array.prototype.slice.call(arguments, 2),
-        isTimeout: true,
-      };
+    worker.postMessage({
+      name: TYPE.SET_TIMEOUT,
+      fakeId: fakeId,
+      time: time,
+    });
+    return fakeId;
+  };
+  worker.clearTimeout = function (fakeId) {
+    if (hasKey(fakeIdToCallback, fakeId)) {
+      delete fakeIdToCallback[fakeId];
       worker.postMessage({
-        name: "setTimeout",
+        name: TYPE.CLEAN_TIMEOUT,
         fakeId: fakeId,
-        time: time,
       });
-      return fakeId;
-    };
-    window.clearTimeout = function (fakeId) {
-      if (Object.prototype.hasOwnProperty.call(fakeIdToCallback, fakeId)) {
+    }
+  };
+  worker.onmessage = (event) => {
+    const fakeId = event?.data?.fakeId;
+    if (hasKey(fakeIdToCallback, fakeId)) {
+      const request = fakeIdToCallback[fakeId];
+      let callback = request.callback;
+      const parameters = request.parameters;
+      if (hasKey(request, "isTimeout") && request.isTimeout) {
         delete fakeIdToCallback[fakeId];
-        worker.postMessage({
-          name: "clearTimeout",
-          fakeId: fakeId,
-        });
-      }
-    };
-    worker.onmessage = function (event) {
-      event;
-      var data = event.data,
-        fakeId = data.fakeId,
-        request,
-        parameters,
-        callback;
-      if (Object.prototype.hasOwnProperty.call(fakeIdToCallback, fakeId)) {
-        request = fakeIdToCallback[fakeId];
-        callback = request.callback;
-        parameters = request.parameters;
-        if (
-          Object.prototype.hasOwnProperty.call(request, "isTimeout") &&
-          request.isTimeout
-        ) {
-          delete fakeIdToCallback[fakeId];
-        }
       }
       if (typeof callback === "string") {
-        try {
-          callback = new Function(callback);
-        } catch (error) {
-          // console.log(
-          //   logPrefix + 'Error parsing callback code string: ',
-          //   error
-          // )
-        }
+        callback = new Function(callback);
       }
       if (typeof callback === "function") {
         callback.apply(window, parameters);
       }
-    };
-    worker.onerror = function (event) {
-      event;
-      //   console.log(event)
-    };
-  } catch (error) {
-    error;
-    // console.log(logPrefix + 'Initialisation failed')
-    // console.error(error)
+    }
+  };
+  return worker;
+}
+const getInstace = compose(createInstance, cache);
+export default function () {
+  if (typeof Worker === "undefined") {
+    throw Error(`HTML5 Web Worker is not supported`);
   }
-} else {
-  // console.log(
-  //   logPrefix + 'Initialisation failed - HTML5 Web Worker is not supported'
-  // )
+  const instance = getInstace();
+  return instance;
 }
