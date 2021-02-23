@@ -62,10 +62,21 @@ function bfs(tree, cb = () => {}) {
   }
   result.length && bfs(result, cb);
 }
+function bfs2(tree, cb = () => {}) {
+  const result = [...tree];
+  while (result.length) {
+    const item = result.shift();
+    cb(item);
+    item.children && result.push(...item.children);
+  }
+}
 
 dfs(tree, (item) => {
   console.log(item.name);
 });
 bfs(tree, (item) => {
+  console.log(item.name);
+});
+bfs2(tree, (item) => {
   console.log(item.name);
 });
