@@ -39,7 +39,8 @@
 7. 浏览器解析 html
 
 - 根据 html 文件构建 DOM 树
-- 解析到 CSS 文件的时候开始构建 CSSOM 树 如果遇到的 link 资源 会发送请求 阻塞 CSSOM 树的构建
+- 解析到 CSS 文件的时候开始构建 CSSOM 树 如果遇到的 link 资源 会发送请求 阻塞 CSSOM 树的构建。
+- 如果有 preload prefetch 属性则不会阻塞页面渲染
 - 当 DOM 树 和 CSSOM 树 构建完成后会根据他们来构建渲染树。根据构建好的渲染树对页面进行绘制。
 - 如果在解析的过程中遇到 JS 文件，判断是否有 defer 或者 async 属性， 没有 defer 和 async 浏览器会理解加载并执行,会导致页面渲染的阻塞
 
