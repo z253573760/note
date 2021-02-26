@@ -1,184 +1,184 @@
-// const list = [0, 4, 3, 9, 0, 2, 1];
+const list = [0, 4, 3, 9, 0, 2, 1];
 
-// //冒泡
-// function bubberSort(list) {
-//   for (let i = 0; i < list.length - 1; i += 1) {
-//     for (let j = i + 1; j < list.length; j += 1) {
-//       if (list[i] > list[j]) {
-//         [list[i], list[j]] = [list[j], list[i]];
-//       }
-//     }
-//   }
-//   console.log(list);
-// }
-// bubberSort([...list]);
-// //快排
-// function quickSort(list) {
-//   if (list.length <= 1) return list;
-//   const [midd, ...other] = list;
-//   const left = [];
-//   const right = [];
-//   for (const item of other) {
-//     if (item < midd) {
-//       left.push(item);
-//     } else {
-//       right.push(item);
-//     }
-//   }
-//   return [...quickSort(left), midd, ...quickSort(right)];
-// }
-// const res = quickSort([...list]);
+//冒泡
+function bubberSort(list) {
+  for (let i = 0; i < list.length - 1; i += 1) {
+    for (let j = i + 1; j < list.length; j += 1) {
+      if (list[i] > list[j]) {
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+    }
+  }
+  console.log(list);
+}
+bubberSort([...list]);
+//快排
+function quickSort(list) {
+  if (list.length <= 1) return list;
+  const [midd, ...other] = list;
+  const left = [];
+  const right = [];
+  for (const item of other) {
+    if (item < midd) {
+      left.push(item);
+    } else {
+      right.push(item);
+    }
+  }
+  return [...quickSort(left), midd, ...quickSort(right)];
+}
+const res = quickSort([...list]);
 
-// console.log(res);
+console.log(res);
 
-// // 继承
-// function People(name) {
-//   this.type = "people";
-//   this.name = name;
-// }
-// People.prototype.say = function () {
-//   console.log("say", this);
-// };
-// function Man(name) {
-//   People.call(this, name);
-//   this.sex = "man";
-// }
-// Man.prototype = People.prototype;
-// Man.prototype.constrouct = Man;
+// 继承
+function People(name) {
+  this.type = "people";
+  this.name = name;
+}
+People.prototype.say = function () {
+  console.log("say", this);
+};
+function Man(name) {
+  People.call(this, name);
+  this.sex = "man";
+}
+Man.prototype = People.prototype;
+Man.prototype.constrouct = Man;
 
-// const m = new Man("123");
-// m.say();
-// console.log(m);
+const m = new Man("123");
+m.say();
+console.log(m);
 
-// //手写new
-// function $new(ctor, ...args) {
-//   const obj = Object.create({
-//     constrouct: ctor,
-//     ...ctor.prototype,
-//   });
-//   const res = ctor.call(obj, ...args);
-//   return res !== null ? res : obj;
-// }
+//手写new
+function $new(ctor, ...args) {
+  const obj = Object.create({
+    constrouct: ctor,
+    ...ctor.prototype,
+  });
+  const res = ctor.call(obj, ...args);
+  return res !== null ? res : obj;
+}
 
-// //防抖
-// function debounce(fn, immediate, wait = 3000, dealy = 500) {
-//   let timer;
-//   let immediated = false;
-//   let lastTime = new Date().getTime();
-//   const handler = (...args) => {
-//     if (immediate && !immediated) {
-//       fn(...args);
-//       immediated = true;
-//       return;
-//     }
-//     const now = new Date().getTime();
-//     if (dealy && now - lastTime >= dealy) {
-//       fn(...args);
-//       lastTime = now;
-//     }
-//     clearTimeout(timer);
-//     timer = setTimeout(() => {
-//       fn(...args);
-//     }, wait);
-//   };
-//   handler.cancel = () => {
-//     clearTimeout(timer);
-//   };
-//   return handler;
-// }
-// const f = debounce(() => console.log(1), true);
+//防抖
+function debounce(fn, immediate, wait = 3000, dealy = 500) {
+  let timer;
+  let immediated = false;
+  let lastTime = new Date().getTime();
+  const handler = (...args) => {
+    if (immediate && !immediated) {
+      fn(...args);
+      immediated = true;
+      return;
+    }
+    const now = new Date().getTime();
+    if (dealy && now - lastTime >= dealy) {
+      fn(...args);
+      lastTime = now;
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn(...args);
+    }, wait);
+  };
+  handler.cancel = () => {
+    clearTimeout(timer);
+  };
+  return handler;
+}
+const f = debounce(() => console.log(1), true);
 
-// for (let i = 0; i < 99; i += 1) {
-//   f();
-// }
+for (let i = 0; i < 99; i += 1) {
+  f();
+}
 
-// //手写bind
+//手写bind
 
-// Function.prototype.$call = function (target, ...args) {
-//   let obj = {
-//     ...target,
-//     $fn: this,
-//   };
-//   const res = obj.$fn(...args);
-//   obj = null;
-//   return res;
-// };
+Function.prototype.$call = function (target, ...args) {
+  let obj = {
+    ...target,
+    $fn: this,
+  };
+  const res = obj.$fn(...args);
+  obj = null;
+  return res;
+};
 
-// (function (params) {
-//   console.log(this.name + ":" + params);
-// }.$call({ name: "call" }, "text"));
+(function (params) {
+  console.log(this.name + ":" + params);
+}.$call({ name: "call" }, "text"));
 
-// // 手写apply
-// Function.prototype.$apply = function (target, list) {
-//   let obj = {
-//     ...target,
-//     $fn: this,
-//   };
-//   const res = obj.$fn(...list);
-//   obj = null;
-//   return res;
-// };
-// (function (params) {
-//   console.log(this.name + ":" + params);
-// }.$apply({ name: "call" }, ["text"]));
+// 手写apply
+Function.prototype.$apply = function (target, list) {
+  let obj = {
+    ...target,
+    $fn: this,
+  };
+  const res = obj.$fn(...list);
+  obj = null;
+  return res;
+};
+(function (params) {
+  console.log(this.name + ":" + params);
+}.$apply({ name: "call" }, ["text"]));
 
-// // 手写bind
-// Function.prototype.$bind = function (target, ...args) {
-//   let obj = {
-//     ...target,
-//     $fn: this,
-//   };
-//   return (...args2) => {
-//     args.push(...args2);
-//     const res = obj.$fn(...args);
-//     obj = null;
-//     return res;
-//   };
-// };
-// function f2(...args) {
-//   console.log(this.name + ":" + args.toString());
-// }
-// const f3 = f2.$bind({ name: "bind" }, 1, 2);
-// f3(3, 4);
+// 手写bind
+Function.prototype.$bind = function (target, ...args) {
+  let obj = {
+    ...target,
+    $fn: this,
+  };
+  return (...args2) => {
+    args.push(...args2);
+    const res = obj.$fn(...args);
+    obj = null;
+    return res;
+  };
+};
+function f2(...args) {
+  console.log(this.name + ":" + args.toString());
+}
+const f3 = f2.$bind({ name: "bind" }, 1, 2);
+f3(3, 4);
 
-// //柯里化
+//柯里化
 
-// function currying(fn) {
-//   const list = [];
-//   const handler = (...args) => {
-//     list.push(...args);
-//     console.log(list);
-//     if (list.length < fn.length) {
-//       return handler;
-//     } else {
-//       return fn(...list);
-//     }
-//   };
-//   return handler;
-// }
-// function add(a, b, c) {
-//   console.log("this", this);
-//   return a + b + c;
-// }
+function currying(fn) {
+  const list = [];
+  const handler = (...args) => {
+    list.push(...args);
+    console.log(list);
+    if (list.length < fn.length) {
+      return handler;
+    } else {
+      return fn(...list);
+    }
+  };
+  return handler;
+}
+function add(a, b, c) {
+  console.log("this", this);
+  return a + b + c;
+}
 
-// const c1 = currying(add);
-// console.log(c1(1)(2)(3));
+const c1 = currying(add);
+console.log(c1(1)(2)(3));
 
-// // 偏函数
-// function partial(fn, ...args) {
-//   const handler = (...args2) => {
-//     args.push(...args2);
-//     if (args.length >= fn.length) {
-//       return fn(...args);
-//     } else {
-//       return handler;
-//     }
-//   };
-//   return handler;
-// }
+// 偏函数
+function partial(fn, ...args) {
+  const handler = (...args2) => {
+    args.push(...args2);
+    if (args.length >= fn.length) {
+      return fn(...args);
+    } else {
+      return handler;
+    }
+  };
+  return handler;
+}
 
-// const c2 = partial(add, 1);
-// console.log(c2(2)(3));
+const c2 = partial(add, 1);
+console.log(c2(2)(3));
 
 // 手写promise
 
@@ -213,6 +213,7 @@ class $Promise {
     }
   }
   then(onFulfilled = (v) => v, onRejected = (v) => v) {
+    console.log("onFulfilled", onFulfilled);
     const p = new $Promise((reslove, reject) => {
       if (this.status === "p") {
         this.cb1.push(() => {
@@ -254,6 +255,24 @@ class $Promise {
   catch(fn) {
     return this.then(undefined, fn);
   }
+  finally(fn) {
+    return this.then(
+      (x) => {
+        return $Promise
+          .reslove()
+          .then(() => {
+            fn();
+          })
+          .then(() => x);
+      },
+      (err) => {
+        return $Promise.reslove().then(() => {
+          fn();
+          throw err;
+        });
+      }
+    );
+  }
 }
 
 $Promise.reslove = function (value) {
@@ -266,6 +285,35 @@ $Promise.reject = function (value) {
     r(value);
   });
 };
+$Promise.all = function (list) {
+  const res = [];
+  let count = 0;
+  return new $Promise((reslove, reject) => {
+    list.forEach((item, index) => {
+      if (item instanceof $Promise) {
+        item.then(
+          (v) => {
+            res[index] = v;
+            count += 1;
+            if (count == list.length) {
+              reslove(res);
+            }
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      } else {
+        res[index] = item;
+        count += 1;
+        if (count == list.length) {
+          reslove(res);
+        }
+      }
+    });
+  });
+};
+
 function handlerPromise(p, x, reslove, reject) {
   if (p === x) {
     throw TypeError("p===x");
@@ -274,7 +322,6 @@ function handlerPromise(p, x, reslove, reject) {
     reslove(x);
     return;
   }
-  console.log("p", p);
   if (x.status === "p") {
     x.then((y) => {
       handlerPromise(x, y, reslove, reject);
@@ -307,3 +354,15 @@ function handlerPromise(p, x, reslove, reject) {
 //   });
 $Promise.reslove(3).then(console.log);
 $Promise.reject(4).then(console.log, console.log);
+$Promise
+  .all([
+    $Promise.reslove(1),
+    $Promise.reslove(2),
+    $Promise.reslove(3),
+    $Promise.reslove(4),
+    $Promise.reject(5),
+  ])
+  .finally(() => {
+    console.log("finally");
+  })
+  .then(console.log, console.log);
