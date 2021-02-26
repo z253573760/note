@@ -65,11 +65,11 @@ function reslovePromise(p, x, reslove, reject) {
     return;
   }
   if (x[status] === STATUS_FULFILLED) {
-    reslove(x[ressult]);
+    reslove(x[result]);
     return;
   }
   if (x[status] === STATUS_REJECTED) {
-    reject(x[ressult]);
+    reject(x[result]);
     return;
   }
 }
