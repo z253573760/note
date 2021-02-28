@@ -1,4 +1,5 @@
 Array.prototype.$reduce = function (fn, initVal = undefined) {
+  if (this.length === 0) return;
   let res = initVal;
   let start = 0;
   if (arguments.length === 1) {
