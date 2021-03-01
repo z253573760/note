@@ -1,5 +1,6 @@
 // 原函数
 function add(a, b, c) {
+  console.log("this", this);
   return a + b + c;
 }
 add.prototype.name = "add";
@@ -22,7 +23,7 @@ function currying(func) {
     return (...newArgs) => {
       args.push(...newArgs);
       if (args.length >= fn.length) {
-        return fn.call(fn, ...args);
+        return fn(...args);
       } else {
         return partial(fn, ...args);
       }
