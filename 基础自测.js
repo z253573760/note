@@ -213,7 +213,6 @@ class $Promise {
     }
   }
   then(onFulfilled = (v) => v, onRejected = (v) => v) {
-    console.log("onFulfilled", onFulfilled);
     const p = new $Promise((reslove, reject) => {
       if (this.status === "p") {
         this.cb1.push(() => {
@@ -334,24 +333,24 @@ function handlerPromise(p, x, reslove, reject) {
     reject(x.result);
   }
 }
-// const p = new $Promise((reslove) => {
-//   reslove("promise3333");
-//   setTimeout(() => {
-//     reslove("promise3333");
-//   }, 3000);
-// })
-//   .then((x) => {
-//     console.log(1, x);
-//     return x + "11";
-//   }, console.log)
-//   .then((x) => {
-//     console.log(2, x);
-//     // return x + "11";
-//     throw x + "22";
-//   }, console.log)
-//   .catch((err) => {
-//     console.log("err", err);
-//   });
+const p = new $Promise((reslove) => {
+  reslove("promise3333");
+  setTimeout(() => {
+    reslove("promise3333");
+  }, 3000);
+})
+  .then((x) => {
+    console.log(1, x);
+    return x + "11";
+  }, console.log)
+  .then((x) => {
+    console.log(2, x);
+    // return x + "11";
+    throw x + "22";
+  }, console.log)
+  .catch((err) => {
+    console.log("err", err);
+  });
 $Promise.reslove(3).then(console.log);
 $Promise.reject(4).then(console.log, console.log);
 $Promise
