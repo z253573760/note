@@ -23,7 +23,7 @@ function createInstance() {
   return instance.mount(root);
 }
 
-// 函数组合
+// 函数组合;
 function compose(...funcs) {
   if (funcs.length === 0) {
     return (arg) => arg;
@@ -35,7 +35,7 @@ function compose(...funcs) {
 }
 
 // 通过compose 得到 获取 photo 实例的函数
-const getInstance = compose(createInstance, cache);
+const getInstance = compose(cache, createInstance);
 
 // 模仿vuex  通过 inject和 provide 挂到跟实例
 export const usePhoto = () => {
