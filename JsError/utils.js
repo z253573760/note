@@ -18,7 +18,7 @@ export function cache(fn) {
 }
 
 export function createWorker(fn) {
-  const blob = new Blob(["(" + fn.toString() + ")()"]);
+  const blob = new Blob(['(' + fn.toString() + ')()']);
   const url = window.URL.createObjectURL(blob);
   const worker = new Worker(url);
   return worker;
@@ -30,6 +30,25 @@ export function hasKey(target, key) {
 
 export function assert(condition, msg) {
   if (!condition) {
-    throw new Error(`${msg}`);
+    throw new Error(`[js-error]:${msg}`);
   }
+}
+
+export function getOS() {
+  // 获取当前操作系统
+  let os;
+  console.log('navigator.userAgent', navigator.userAgent);
+  if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1) {
+    os = 'Android';
+  } else if (
+    navigator.userAgent.indexOf('iPhone') > -1 ||
+    navigator.userAgent.indexOf('iPad') > -1
+  ) {
+    os = 'iOS';
+  } else if (navigator.userAgent.indexOf('Windows Phone') > -1) {
+    os = 'WP';
+  } else {
+    os = 'Others';
+  }
+  return os;
 }
