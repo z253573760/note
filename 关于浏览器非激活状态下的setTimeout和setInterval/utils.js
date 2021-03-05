@@ -27,3 +27,9 @@ export function createWorker(fn) {
 export function hasKey(target, key) {
   return Object.prototype.hasOwnProperty.call(target, key);
 }
+
+export function assert(condition, msg) {
+  if (!condition) {
+    throw new Error(`${msg}`);
+  }
+}
