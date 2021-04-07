@@ -4,7 +4,7 @@ const list = [0, 4, 3, 9, 0, 2, 1];
 function bubberSort(list) {
   for (let i = 0; i < list.length - 1; i += 1) {
     for (let j = i + 1; j < list.length; j += 1) {
-      if (list[i] > list[j]) {
+        if (list[i] > list[j]) {
         [list[i], list[j]] = [list[j], list[i]];
       }
     }
