@@ -10,20 +10,33 @@
 // 因为 nums[0] + nums[1] = 2 + 7 = 9
 // 所以返回 [0, 1]
 
+// function sum2(nums, target) {
+//   const map = {}
+//   for (let i = 0; i < nums.length; i += 1) {
+//     const diff = target - nums[i]
+//     if (map[diff]) {
+//       return [map[diff].index, i]
+//     }
+//     map[nums[i]] = {
+//       index: i
+//     }
+//   }
+//   console.log(map)
+//   return []
+// }
 
-function sum(nums, target) {
-  const map = {}
-  for (let i = 0; i < nums.length; i += 1) {
-    const diff = target - nums[i]
-    if (map[diff]) {
-      return [map[diff].index, i]
-    }
-    map[nums[i]] = {
-      index: i
+function sum(list, target) {
+  const map = {};
+  for (let i = 0; i < list.length; i += 1) {
+    const item = list[i];
+    if (map[item]) {
+      return [map[item], i];
+    } else {
+      const diff = target - item;
+      map[diff] = i;
     }
   }
-  console.log(map)
-  return []
+  return [-1, -1];
 }
-const res = sum([2, 7, 11, 15], 17)
-console.log(res)
+const res = sum([2, 7, 11, 15], 9);
+console.log(res);

@@ -2,9 +2,9 @@ function isObject(target) {
   return typeof target === "object" && target !== null;
 }
 /* 建立响应式数据 */
-function reactive(target) {
-  if (!isObject(target)) return target;
-  return new Proxy(target, {
+function reactive(obj) {
+  if (!isObject(obj)) return obj;
+  return new Proxy(obj, {
     get(target, key, receiver) {
       const res = Reflect.get(target, key, receiver);
       track(target, key);

@@ -1,4 +1,5 @@
-// 第 159 题：实现 Promise.retry，成功后 resolve 结果，失败后重试，尝试超过一定次数才真正的 reject
+// 第 159 题：实现 Promise.retry，
+//成功后 resolve 结果，失败后重试，尝试超过一定次数才真正的 reject
 
 Promise.retry = function (fn, max = 3) {
   let p = new Promise(fn);

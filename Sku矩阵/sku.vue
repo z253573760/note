@@ -1,12 +1,8 @@
 <template>
   <div class="page">
     <div class="line">已选：{{ result }}</div>
-    <div class="line">商品： {{sku}}</div>
-    <div
-      class="radio-wrap"
-      v-for="item in radioList"
-      :key="item.title"
-    >
+    <div class="line">商品： {{ sku }}</div>
+    <div class="radio-wrap" v-for="item in radioList" :key="item.title">
       <div>{{ item.title }}</div>
       <div class="spec-wrap">
         <div
@@ -14,7 +10,7 @@
           @click="onChoose(item.title, spec.title, spec.disabled)"
           :class="{
             'spec-active': getActive(item.title, spec.title),
-            'spec-disabled': spec.disabled,
+            'spec-disabled': spec.disabled
           }"
           v-for="spec in item.list"
           :key="spec.title"
@@ -31,7 +27,7 @@ import { ref } from "vue";
 const specList = [
   { title: "颜色", list: ["红色", "紫色", "白色", "黑色"] },
   { title: "套餐", list: ["套餐一", "套餐二", "套餐三", "套餐四"] },
-  { title: "内存", list: ["64G", "128G", "256G"] },
+  { title: "内存", list: ["64G", "128G", "256G"] }
 ];
 
 const skuList = [
@@ -82,7 +78,7 @@ const skuList = [
   { id: 1608188117221, specs: ["黑色", "套餐三", "256G"] },
   { id: 1608188117222, specs: ["黑色", "套餐四", "64G"] },
   { id: 1608188117223, specs: ["黑色", "套餐四", "128G"] },
-  { id: 1608188117224, specs: ["黑色", "套餐四", "256G"] },
+  { id: 1608188117224, specs: ["黑色", "套餐四", "256G"] }
 ];
 
 function cacheDisabled() {
@@ -92,10 +88,10 @@ function cacheDisabled() {
     const strKey = JSON.stringify(result);
     if (Object.prototype.hasOwnProperty.call(cache, strKey))
       return !cache[strKey];
-    const skuTarget = skuList.find((item) => {
+    const skuTarget = skuList.find(item => {
       const specs = item.specs;
       let count = 0;
-      Object.values(result).forEach((sku) => {
+      Object.values(result).forEach(sku => {
         if (sku === null) {
           count++;
         } else if (sku !== null && specs.includes(sku)) {
@@ -105,25 +101,24 @@ function cacheDisabled() {
       return count === specs.length;
     });
     cache[strKey] = skuTarget;
-    return !flag;
+    return !cache[strKey];
   }
-  getDisabled.getSku = function (result) {
-    const isEmpty = Object.values(result).some((_) => _ === null);
+  getDisabled.getSku = function(result) {
+    const isEmpty = Object.values(result).some(_ => _ === null);
     if (isEmpty) return null;
     const strKey = JSON.stringify(result);
-    console.log("cache", cache, strKey);
     return cache[strKey];
   };
   return getDisabled;
 }
 const getDisabled = cacheDisabled();
-const getRadioList = (result) => {
-  return [...specList].map((_item) => ({
+const getRadioList = result => {
+  return [...specList].map(_item => ({
     ..._item,
-    list: _item.list.map((item) => ({
+    list: _item.list.map(item => ({
       title: item,
-      disabled: getDisabled(_item.title, item, { ...result }),
-    })),
+      disabled: getDisabled(_item.title, item, { ...result })
+    }))
   }));
 };
 export default {
@@ -158,9 +153,9 @@ export default {
       result,
       getActive,
       onChoose,
-      sku,
+      sku
     };
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>

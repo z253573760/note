@@ -18,7 +18,7 @@ export function cache(fn) {
 }
 
 export function createWorker(fn) {
-  const blob = new Blob(['(' + fn.toString() + ')()']);
+  const blob = new Blob(["(" + fn.toString() + ")()"]);
   const url = window.URL.createObjectURL(blob);
   const worker = new Worker(url);
   return worker;
@@ -37,18 +37,33 @@ export function assert(condition, msg) {
 export function getOS() {
   // 获取当前操作系统
   let os;
-  console.log('navigator.userAgent', navigator.userAgent);
-  if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1) {
-    os = 'Android';
-  } else if (
-    navigator.userAgent.indexOf('iPhone') > -1 ||
-    navigator.userAgent.indexOf('iPad') > -1
+  console.log("navigator.userAgent", navigator.userAgent);
+  if (
+    navigator.userAgent.indexOf("Android") > -1 ||
+    navigator.userAgent.indexOf("Linux") > -1
   ) {
-    os = 'iOS';
-  } else if (navigator.userAgent.indexOf('Windows Phone') > -1) {
-    os = 'WP';
+    os = "Android";
+  } else if (
+    navigator.userAgent.indexOf("iPhone") > -1 ||
+    navigator.userAgent.indexOf("iPad") > -1
+  ) {
+    os = "iOS";
+  } else if (navigator.userAgent.indexOf("Windows Phone") > -1) {
+    os = "WP";
   } else {
-    os = 'Others';
+    os = "Others";
   }
   return os;
 }
+
+window.addEventListener("unhandledrejection", function (event) {
+  console.log("unhandledrejection", arguments);
+});
+window.addEventListener("rejectionHandled", function (event) {
+  console.log("rejectionHandled", arguments);
+});
+
+Promise.reject(13);
+new Promise(() => {
+  throw "throw";
+});

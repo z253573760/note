@@ -1,6 +1,5 @@
 const list = [1, 1, 1, 2, 3, 4, 5, 6, 7, 11];
 function indexOf(list, target, diff = 0) {
-  console.log("diff", diff);
   let len = list.length;
   if (len === 1 && target !== list[0]) return -1;
   const index = Math.floor(len / 2);

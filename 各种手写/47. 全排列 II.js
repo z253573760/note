@@ -11,31 +11,30 @@
 //   [2,1,1]
 // ]
 var permuteUnique = function (nums) {
-  const result = [];
+  const res = [];
   const used = {};
   nums = nums.sort((a, b) => a - b);
-
-  function dfs(res) {
-    if (res.length === nums.length) {
-      result.push([...res]);
+  console.log(nums);
+  function dfs(list = []) {
+    if (list.length === nums.length) {
+      res.push([...list]);
       return;
     }
     for (let i = 0; i < nums.length; i += 1) {
-      const item = nums[i];
-      if (nums[i - 1] == nums[i] && i - 1 >= 0 && !used[i - 1]) {
+      if (!used[i - 1] && i > 0 && nums[i] === nums[i - 1]) {
         continue;
       }
       if (used[i]) continue;
+      list.push(nums[i]);
       used[i] = true;
-      res.push(item);
-      dfs(res);
-      res.pop();
+      dfs(list);
+      list.pop();
       used[i] = false;
     }
   }
-  dfs([]);
-  return result;
+  dfs();
+  return res;
 };
 
-const res = permuteUnique([2, 1, 2, 2]);
+const res = permuteUnique([1, 1, 2]);
 console.log(res);

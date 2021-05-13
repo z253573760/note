@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+<script src="../dist/vue-next.umd.js"></script>
+<script>
+  const vue = window["vue-next"];
+  const { reactive, effect, createApp } = vue;
+  createApp();
+  const vm = reactive({
+    a: 1,
+    b: {
+      c: 1,
+    },
+    list: [0, 1, 2],
+  });
+  effect(() => {
+    document.querySelector("#app").innerHTML = vm.list;
+    console.log("vmm.list", vm.list);
+  });
+  vm.list[4] = 5;
+
+  const arr = [12, 3, 4, 5];
+  Object.keys(arr).forEach((key) => {
+    let value = arr[key];
+    Object.defineProperty(arr, key, {
+      set(v) {
+        console.log("set");
+        value = v;
+      },
+      get(v) {
+        console.log("get");
+        return value;
+      },
+    });
+  });
+
+  arr.push(3);
+  // vm.list[3] = 3;
+  // vm.list[4] = 4;
+  // vm.list[5] = 5;
+
+  // setInterval(() => {
+  //   // vm.a = vm.a + 1;
+  //   // vm.a = vm.a + 1;
+  //   // vm.a = vm.a + 1;
+  //   // vm.a = vm.a + 1;
+  //   // vm.list[3] = vm.list[0] + 1;
+  //   // vm.f = "321";
+  //   vm.b.d = 2;
+  // }, 2000);
+</script>

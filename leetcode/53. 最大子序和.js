@@ -18,20 +18,39 @@
  */
 var maxSubArray = function (nums) {
   if (nums.length === 0) return 0;
-  let curSum = nums[0];
-  let maxSum = curSum;
+  let max = nums[0];
+  let current = max;
   for (let i = 1; i < nums.length; i += 1) {
     const num = nums[i];
-    if (curSum > 0) {
-      curSum += num;
+    if (num >= max) {
+      current = num;
     } else {
-      curSum = num;
+      current = num + current;
     }
-    if (curSum > maxSum) {
-      maxSum = curSum;
+    max = Math.max(current, max);
+  }
+  return max;
+};
+const list = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+const res = maxSubArray(list);
+console.log("res", res);
+function maxSubArray3(list) {
+  let left = 0;
+  let right = 1;
+  let current = list[0];
+  let max = current;
+  while (right < list.length) {
+    current = current + list[right];
+    max = Math.max(max, current);
+    right += 1;
+    if (right === list.length) {
+      left = left + 1;
+      right = left + 1;
+      current = list[left];
+      max = Math.max(max, current);
     }
   }
-  return maxSum;
-};
-const res = maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]);
-console.log(res);
+  return max;
+}
+const res2 = maxSubArray3(list);
+console.log("res2", res2);
